@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
-type Page = 'home' | 'shop' | 'product' | 'about' | 'contact' | 'testimonials' | 'cart' | 'checkout' | 'wishlist' | 'shipping' | 'returns' | 'faq' | 'privacy' | 'terms' | 'journal' | 'auth' | 'profile';
+type Page = 'home' | 'shop' | 'product' | 'about' | 'contact' | 'testimonials' | 'cart' | 'checkout' | 'wishlist' | 'shipping' | 'returns' | 'faq' | 'privacy' | 'terms' | 'journal' | 'auth' | 'forgot-password' | 'new-password' | 'profile';
 
 interface User {
   name: string;
@@ -676,12 +676,74 @@ const JournalPage = () => (
   </div>
 );
 
+const ForgotPasswordPage = ({ navigate }: { navigate: (p: Page) => void }) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate('new-password');
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-12">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-subtle-light">
+        <h1 className="text-3xl font-bold text-center mb-4 text-text-light">Reset Password</h1>
+        <p className="text-center text-text-muted-light mb-8">Enter your email to receive a password reset link.</p>
+        
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-sm font-medium text-text-light mb-2">Email Address</label>
+            <input type="email" required className="w-full h-12 rounded-lg border-border-color focus:ring-primary focus:border-primary px-4" />
+          </div>
+          
+          <button className="w-full h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors">
+            Send Reset Link
+          </button>
+        </form>
+        
+        <div className="mt-6 text-center">
+          <a onClick={() => navigate('auth')} className="text-sm font-medium text-text-muted-light hover:text-primary cursor-pointer">Back to Sign In</a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const NewPasswordPage = ({ navigate }: { navigate: (p: Page) => void }) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate('auth');
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-12">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-subtle-light">
+        <h1 className="text-3xl font-bold text-center mb-4 text-text-light">New Password</h1>
+        <p className="text-center text-text-muted-light mb-8">Please enter your new password below.</p>
+        
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-sm font-medium text-text-light mb-2">New Password</label>
+            <input type="password" required className="w-full h-12 rounded-lg border-border-color focus:ring-primary focus:border-primary px-4" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-light mb-2">Confirm Password</label>
+            <input type="password" required className="w-full h-12 rounded-lg border-border-color focus:ring-primary focus:border-primary px-4" />
+          </div>
+          
+          <button className="w-full h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors">
+            Reset Password
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const AuthPage = ({ setUser, navigate }: { setUser: (u: User) => void, navigate: (p: Page) => void }) => {
   const [isLogin, setIsLogin] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login
+    // Mock login/signup success
     setUser({ name: 'Jane Doe', email: 'jane@example.com' });
     navigate('profile');
   };
@@ -689,17 +751,17 @@ const AuthPage = ({ setUser, navigate }: { setUser: (u: User) => void, navigate:
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-12">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-subtle-light">
-        <h1 className="text-3xl font-bold text-center mb-8">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
+        <h1 className="text-3xl font-bold text-center mb-8 text-text-light">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
         
         <div className="flex mb-8 border-b border-subtle-light">
           <button 
-            className={`flex-1 pb-3 font-medium ${isLogin ? 'text-primary border-b-2 border-primary' : 'text-text-muted-light'}`}
+            className={`flex-1 pb-3 font-medium transition-colors ${isLogin ? 'text-primary border-b-2 border-primary' : 'text-text-muted-light hover:text-text-light'}`}
             onClick={() => setIsLogin(true)}
           >
             Sign In
           </button>
           <button 
-            className={`flex-1 pb-3 font-medium ${!isLogin ? 'text-primary border-b-2 border-primary' : 'text-text-muted-light'}`}
+            className={`flex-1 pb-3 font-medium transition-colors ${!isLogin ? 'text-primary border-b-2 border-primary' : 'text-text-muted-light hover:text-text-light'}`}
             onClick={() => setIsLogin(false)}
           >
             Sign Up
@@ -728,7 +790,9 @@ const AuthPage = ({ setUser, navigate }: { setUser: (u: User) => void, navigate:
         </form>
         
         {isLogin && (
-          <p className="text-center text-sm text-text-muted-light mt-4 cursor-pointer hover:text-primary">Forgot Password?</p>
+          <p className="text-center text-sm text-text-muted-light mt-4">
+            <span className="cursor-pointer hover:text-primary transition-colors" onClick={() => navigate('forgot-password')}>Forgot Password?</span>
+          </p>
         )}
       </div>
     </div>
@@ -737,6 +801,7 @@ const AuthPage = ({ setUser, navigate }: { setUser: (u: User) => void, navigate:
 
 const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
   <div className="w-full max-w-5xl mx-auto px-4 py-12">
+    <h1 className="text-3xl font-bold text-text-light mb-8">My Account</h1>
     <div className="flex flex-col md:flex-row gap-8">
       <div className="w-full md:w-1/3">
         <div className="bg-white p-6 rounded-xl border border-subtle-light text-center">
@@ -745,7 +810,7 @@ const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
           </div>
           <h2 className="text-xl font-bold text-text-light">{user.name}</h2>
           <p className="text-text-muted-light text-sm mb-6">{user.email}</p>
-          <button onClick={logout} className="w-full h-10 border border-border-color rounded-lg text-sm font-medium hover:bg-subtle-light transition-colors">
+          <button onClick={logout} className="w-full h-10 border border-border-color rounded-lg text-sm font-medium hover:bg-subtle-light transition-colors text-text-light">
             Log Out
           </button>
         </div>
@@ -753,13 +818,13 @@ const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
       
       <div className="w-full md:w-2/3 space-y-8">
         <div>
-          <h3 className="text-xl font-bold mb-4">Recent Orders</h3>
+          <h3 className="text-xl font-bold mb-4 text-text-light">Recent Orders</h3>
           <div className="bg-white rounded-xl border border-subtle-light overflow-hidden">
             {[
               { id: "#10234", date: "Oct 12, 2023", total: "$73.00", status: "Delivered" },
               { id: "#10201", date: "Sep 05, 2023", total: "$45.00", status: "Delivered" }
             ].map((order, i) => (
-              <div key={i} className="flex justify-between items-center p-6 border-b border-subtle-light last:border-0">
+              <div key={i} className="flex justify-between items-center p-6 border-b border-subtle-light last:border-0 hover:bg-fbf9fa transition-colors">
                 <div>
                   <p className="font-bold text-text-light">{order.id}</p>
                   <p className="text-sm text-text-muted-light">{order.date}</p>
@@ -774,9 +839,9 @@ const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
         </div>
 
         <div>
-          <h3 className="text-xl font-bold mb-4">Account Details</h3>
+          <h3 className="text-xl font-bold mb-4 text-text-light">Account Details</h3>
           <div className="bg-white p-6 rounded-xl border border-subtle-light">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-bold uppercase text-text-muted-light mb-1">Name</label>
                 <p className="text-text-light font-medium">{user.name}</p>
@@ -790,6 +855,7 @@ const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
                 <p className="text-text-light font-medium">New York, USA</p>
               </div>
             </div>
+            <button className="mt-6 text-sm font-medium text-primary hover:text-primary/80 transition-colors">Edit Details</button>
           </div>
         </div>
       </div>
@@ -829,6 +895,8 @@ const App = () => {
       case 'terms': return <TermsOfServicePage />;
       case 'journal': return <JournalPage />;
       case 'auth': return <AuthPage setUser={setUser} navigate={setActivePage} />;
+      case 'forgot-password': return <ForgotPasswordPage navigate={setActivePage} />;
+      case 'new-password': return <NewPasswordPage navigate={setActivePage} />;
       case 'profile': return user ? <ProfilePage user={user} logout={() => { setUser(null); setActivePage('home'); }} /> : <AuthPage setUser={setUser} navigate={setActivePage} />;
       
       default: return <HomePage navigate={setActivePage} />;
