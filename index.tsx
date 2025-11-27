@@ -73,6 +73,8 @@ const formatPrice = (price: number, currency: Currency) => {
 const Header = ({ activePage, navigate, cartCount, user, searchTerm, setSearchTerm, currency, setCurrency }: { activePage: Page, navigate: (p: Page) => void, cartCount: number, user: User | null, searchTerm: string, setSearchTerm: (t: string) => void, currency: Currency, setCurrency: (c: Currency) => void }) => {
   const navLinkClass = (page: Page) => 
     `text-sm font-medium transition-colors cursor-pointer ${activePage === page ? 'text-primary font-bold' : 'text-text-light hover:text-primary'}`;
+  
+  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 flex h-20 items-center justify-center border-b border-subtle-light bg-background-light/90 backdrop-blur-sm">
@@ -99,16 +101,32 @@ const Header = ({ activePage, navigate, cartCount, user, searchTerm, setSearchTe
         </nav>
 
         <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
-          {/* Currency Switcher */}
-          <div className="hidden md:block">
-             <select 
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value as Currency)}
-                className="bg-transparent border-none text-sm font-medium text-text-light focus:ring-0 cursor-pointer"
+          {/* Currency Switcher - Animated Dropdown */}
+          <div className="relative hidden md:block">
+             <button 
+                onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
+                className="flex items-center gap-1 bg-transparent border-none text-sm font-medium text-text-light focus:outline-none cursor-pointer hover:text-primary transition-colors"
              >
-               <option value="NGN">₦ NGN</option>
-               <option value="USD">$ USD</option>
-             </select>
+               <span>{currency === 'NGN' ? '₦ NGN' : '$ USD'}</span>
+               <span className={`material-symbols-outlined text-lg transition-transform duration-200 ${isCurrencyOpen ? 'rotate-180' : ''}`}>expand_more</span>
+             </button>
+             
+             <div className={`absolute right-0 top-full mt-2 w-32 bg-white dark:bg-background-dark rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 ease-out origin-top-right z-50 ${isCurrencyOpen ? 'transform scale-100 opacity-100' : 'transform scale-95 opacity-0 pointer-events-none'}`}>
+                <div className="py-1">
+                  <button
+                    onClick={() => { setCurrency('NGN'); setIsCurrencyOpen(false); }}
+                    className={`block w-full text-left px-4 py-2 text-sm ${currency === 'NGN' ? 'bg-primary/10 text-primary font-bold' : 'text-text-light hover:bg-subtle-light'}`}
+                  >
+                    ₦ NGN
+                  </button>
+                  <button
+                    onClick={() => { setCurrency('USD'); setIsCurrencyOpen(false); }}
+                    className={`block w-full text-left px-4 py-2 text-sm ${currency === 'USD' ? 'bg-primary/10 text-primary font-bold' : 'text-text-light hover:bg-subtle-light'}`}
+                  >
+                    $ USD
+                  </button>
+                </div>
+             </div>
           </div>
 
           <div className="hidden max-w-xs flex-1 md:flex">
@@ -167,22 +185,6 @@ const Footer = ({ navigate, setCategory }: { navigate: (p: Page) => void, setCat
           </div>
           <h2 className="text-lg font-bold tracking-tight font-serif text-text-light">ZARA'S GLOSS</h2>
         </div>
-        
-        {/* Newsletter Signup Form */}
-        <div className="w-full md:w-auto max-w-md">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-text-light mb-3">Subscribe to our Newsletter</h3>
-          <div className="flex">
-            <input 
-              type="email" 
-              placeholder="Enter your email" 
-              className="flex-1 h-10 px-4 rounded-l-lg border border-border-color text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none bg-white"
-            />
-            <button className="h-10 px-6 bg-primary text-white text-sm font-bold rounded-r-lg hover:bg-primary/90 transition-colors">
-              Subscribe
-            </button>
-          </div>
-        </div>
-
         <div className="flex gap-6">
            <a className="hover:text-primary cursor-pointer text-text-light"><i className="material-symbols-outlined">public</i></a>
            <a className="hover:text-primary cursor-pointer text-text-light"><i className="material-symbols-outlined">share</i></a>
@@ -260,6 +262,20 @@ const QuickViewModal = ({ product, isOpen, onClose, addToCart, toggleWishlist, i
     </div>
   );
 };
+
+const SocialShareButtons = () => (
+    <div className="flex gap-3 mt-4">
+        <button className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616v.064c0 2.298 1.635 4.218 3.82 4.652-.76.207-1.564.246-2.384.092.627 1.956 2.445 3.379 4.6 3.419-2.07 1.623-4.678 2.588-7.52 2.588-1.01 0-1.928-.057-2.828-.168 2.396 1.536 5.246 2.434 8.312 2.434 9.878 0 15.34-8.158 15.01-15.632.97-.699 1.8-1.568 2.46-2.548z"/></svg>
+        </button>
+        <button className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+        </button>
+        <button className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.372-12 12 0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.117.223.084.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.318.545 3.591.545 6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z"/></svg>
+        </button>
+    </div>
+);
 
 // --- Pages ---
 
@@ -510,6 +526,17 @@ const ProductPage = ({ navigate, addToCart, toggleWishlist, isInWishlist, curren
         </div>
 
         <div className="flex flex-col">
+          {/* Product Badge */}
+          {product.badge && (
+            <span className={`w-fit px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3 ${
+              product.badge === 'New Arrival' ? 'bg-blue-100 text-blue-800' :
+              product.badge === 'Best Seller' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }`}>
+              {product.badge}
+            </span>
+          )}
+
           <h1 className="text-4xl font-serif font-bold text-text-light mb-2">{product.name}</h1>
           <p className="text-lg text-text-muted-light mb-4">{product.sub}</p>
           
@@ -534,8 +561,10 @@ const ProductPage = ({ navigate, addToCart, toggleWishlist, isInWishlist, curren
               <span className={`material-symbols-outlined ${isInWishlist(product.id) ? 'filled' : ''}`}>favorite</span>
             </button>
           </div>
+          
+          <SocialShareButtons />
 
-          <div className="border-t border-border-color pt-8">
+          <div className="border-t border-border-color pt-8 mt-6">
             <div className="flex gap-8 border-b border-border-color mb-6">
               <button 
                 className={`pb-3 border-b-2 font-medium transition-colors ${activeTab === 'description' ? 'border-primary text-text-light font-bold' : 'border-transparent text-text-muted-light hover:text-primary'}`}
@@ -857,52 +886,94 @@ const ContactPage = () => (
   </div>
 );
 
-const WishlistPage = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart, currency }: { wishlistItems: Product[], addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, addAllToCart: (items: Product[]) => void, currency: Currency }) => (
-  <div className="w-full max-w-7xl mx-auto px-4 py-12">
-    <h1 className="text-4xl font-black text-text-light mb-8">My Wishlist</h1>
-    
-    {wishlistItems.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-xl text-text-muted-light mb-6">Your wishlist is empty.</p>
-        </div>
-    ) : (
-      <>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {wishlistItems.map((item, i) => (
-            <div key={i} className="flex flex-col gap-3 relative group">
-              <div className="w-full aspect-[3/4] rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${item.img})` }}>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); toggleWishlist(item); }}
-                  className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary hover:text-white"
-                >
-                  <span className="material-symbols-outlined text-sm">close</span>
-                </button>
-              </div>
-              <div className="text-center">
-                <p className="font-medium text-text-light">{item.name}</p>
-                <p className="text-sm text-text-light mt-1">{formatPrice(item.price, currency)}</p>
-                <button 
-                  onClick={() => addToCart(item)}
-                  className="mt-3 w-full h-10 bg-primary text-white font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  Add to Cart
-                </button>
-              </div>
+const WishlistPageRefactored = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart, currency, isInWishlist }: { wishlistItems: Product[], addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, addAllToCart: (items: Product[]) => void, currency: Currency, isInWishlist: (id: string) => boolean }) => {
+    const [wishlistSearchTerm, setWishlistSearchTerm] = useState('');
+    const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+
+    const filteredWishlist = wishlistItems.filter(item => 
+        item.name.toLowerCase().includes(wishlistSearchTerm.toLowerCase())
+    );
+
+    return (
+        <div className="w-full max-w-7xl mx-auto px-4 py-12">
+            <QuickViewModal 
+                product={quickViewProduct} 
+                isOpen={!!quickViewProduct} 
+                onClose={() => setQuickViewProduct(null)} 
+                addToCart={addToCart} 
+                toggleWishlist={toggleWishlist} 
+                isInWishlist={isInWishlist}
+                currency={currency}
+            />
+
+            <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+                <h1 className="text-4xl font-black text-text-light">My Wishlist</h1>
+                <div className="relative w-full md:w-64">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted-light">search</span>
+                    <input 
+                        className="w-full h-10 pl-10 pr-4 rounded-full bg-subtle-light border-0 focus:ring-2 focus:ring-primary/50 text-sm placeholder:text-text-muted-light transition-all"
+                        placeholder="Search wishlist..."
+                        type="text"
+                        value={wishlistSearchTerm}
+                        onChange={(e) => setWishlistSearchTerm(e.target.value)}
+                    />
+                </div>
             </div>
-          ))}
+            
+            {wishlistItems.length === 0 ? (
+                <div className="text-center py-20">
+                <p className="text-xl text-text-muted-light mb-6">Your wishlist is empty.</p>
+                </div>
+            ) : filteredWishlist.length === 0 ? (
+                <div className="text-center py-20">
+                    <p className="text-xl text-text-muted-light">No items found in wishlist.</p>
+                </div>
+            ) : (
+            <>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {filteredWishlist.map((item, i) => (
+                    <div key={i} className="flex flex-col gap-3 relative group cursor-pointer" onClick={() => setQuickViewProduct(item)}>
+                    <div className="w-full aspect-[3/4] rounded-lg bg-cover bg-center relative" style={{ backgroundImage: `url(${item.img})` }}>
+                        <button 
+                        onClick={(e) => { e.stopPropagation(); toggleWishlist(item); }}
+                        className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary hover:text-white z-10"
+                        >
+                        <span className="material-symbols-outlined text-sm">close</span>
+                        </button>
+                         {/* Quick View Button Overlay */}
+                        <button 
+                            className="absolute bottom-4 left-1/2 -translate-x-1/2 w-auto px-4 h-8 bg-white/90 backdrop-blur-sm text-text-light text-xs font-bold rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:text-white z-10"
+                            onClick={(e) => { e.stopPropagation(); setQuickViewProduct(item); }}
+                        >
+                            Quick View
+                        </button>
+                    </div>
+                    <div className="text-center">
+                        <p className="font-medium text-text-light">{item.name}</p>
+                        <p className="text-sm text-text-light mt-1">{formatPrice(item.price, currency)}</p>
+                        <button 
+                        onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+                        className="mt-3 w-full h-10 bg-primary text-white font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors"
+                        >
+                        Add to Cart
+                        </button>
+                    </div>
+                    </div>
+                ))}
+                </div>
+                <div className="flex justify-center mt-12">
+                <button 
+                    onClick={() => addAllToCart(filteredWishlist)}
+                    className="h-12 px-8 border border-border-color rounded-lg font-bold text-text-light hover:bg-subtle-light transition-colors"
+                >
+                    Add All to Cart
+                </button>
+                </div>
+            </>
+            )}
         </div>
-        <div className="flex justify-center mt-12">
-          <button 
-            onClick={() => addAllToCart(wishlistItems)}
-            className="h-12 px-8 border border-border-color rounded-lg font-bold text-text-light hover:bg-subtle-light transition-colors"
-          >
-            Add All to Cart
-          </button>
-        </div>
-      </>
-    )}
-  </div>
-);
+    );
+};
 
 // --- New Pages ---
 
@@ -1007,6 +1078,7 @@ const JournalPage = () => (
           <p className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">Beauty</p>
           <h3 className="text-xl font-bold text-text-light mb-2 group-hover:text-primary transition-colors">{article.title}</h3>
           <p className="text-sm text-text-muted-light">{article.date}</p>
+          <SocialShareButtons />
         </div>
       ))}
     </div>
@@ -1265,7 +1337,7 @@ const App = () => {
       case 'testimonials': return <TestimonialsPage />;
       case 'cart': return <CartPage navigate={setActivePage} cartItems={cartItems} updateQuantity={updateCartQuantity} currency={currency} />;
       case 'checkout': return <CheckoutPage />;
-      case 'wishlist': return <WishlistPage wishlistItems={wishlistItems} addToCart={addToCart} toggleWishlist={toggleWishlist} addAllToCart={addAllToCart} currency={currency} />;
+      case 'wishlist': return <WishlistPageRefactored wishlistItems={wishlistItems} addToCart={addToCart} toggleWishlist={toggleWishlist} addAllToCart={addAllToCart} currency={currency} isInWishlist={isInWishlist} />;
       
       // New Pages
       case 'shipping': return <ShippingPage currency={currency} />;
