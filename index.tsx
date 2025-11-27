@@ -9,6 +9,36 @@ interface User {
   email: string;
 }
 
+interface Product {
+  id: string;
+  name: string;
+  sub: string;
+  price: number;
+  img: string;
+}
+
+interface CartItem extends Product {
+  quantity: number;
+}
+
+// --- Mock Data ---
+const PRODUCTS: Product[] = [
+  { id: '1', name: "Luxe Lip Oil", sub: "Crystal Clear", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDKj21ZbHEbXYRtj7j6uGi5ly-LNfWv14P0T_rBJ7aB-oqSmMH9LQnMUKKnocX1OSNcogTjVYb5Y5zBteVhphmi3GKAuxsMn4Xlg6nhOu6wlJ_u2AYY3puxrP2Z_VjYn1Oks_N7bnV9pR1mqlgnBQCv82tdCkiph4nbL6Jp8JHfptGdMInBOG2N8ue80Bo0zy-VN328MutjoPoOB-rlPgezsKv3j6kTQYKh6Zk8eFoMI8WnYgdJZXrJ7WkCUVDUiD_Go3REg__VzeQ" },
+  { id: '2', name: "Radiant Serum", sub: "Hydrating Elixir", price: 45000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuACYOX2EDB6sFMQZ7gVxQwv7MAQiTBgPoJL2cFNTPYPvDS5pGCqmkPIwRiDYPjagdYqdvlF9REXZOXlhD37uIpa7IyMo9gpO9Th4BZYQBLknkSjfODHpW6F9P9cy78lBr-sngMKCAKvXRZW-YK0Loe0E84Sy0FoA2xSJgU9sQZF5Ur69zxpadxW69DnEWhPMroUOwvyOaHtxLuFt37iEvZnmCF0p9Ra-bvIHvpKo7DDwToSkNRJyClJR1hxwVWJD02mhaN_Oluur1Q" },
+  { id: '3', name: "Glow Foundation", sub: "Shade 2N", price: 52000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDcykf455oiIm92LkgTJDw4C4PU15P0FKToSg6w71z13rUBqu_pXYbAAR11RqEXkHMSkHel4EHxpFxsT-cPSAlkb9henIyY2GeSdF9yiZ30myYNbSPQbz34mrlUm81SWjdL-7L1hYHWR268CrXMAuKzVYWS5EV8vuyleRti9S8o4R1MnDZ-NAlQnIInGe4eIkfRlCrjbbjso9cqwdGZpk5vHxSkqv1ie3cOeLFHawImWrRAhEsko6OH3QfhemNcE0BTCcZgOq-jLmY" },
+  { id: '4', name: "Velvet Matte Lipstick", sub: "Rose Petal", price: 34000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAR4v4uEHHtakPxFT5H_tei_p7400lDW7vdCYZGSpB6aGMPx569l--qVDlMkSzRZjyJv22tYALeeVTMwJhnT3RvJJuU_z2jEnD_Y2PxZhMvSApf6swCBRyC2jgkGqRTAIX4Zk5mm_U2cAp6iJ6HfDIKxf7sOKoNQqW7MeIm4Lwlz153s6I8KVlDLXqwjwyzm_6eS_i311EXkeAwI2MRQL4Wh1f5Lm1lHIljPBm3Tlh1q0qwCvT1GNFL9niwktgqN9khwz8AL5J63mg" },
+  { id: '5', name: "Crystal Clear Gloss", sub: "High Shine", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6B2ky3Wv5aQQNEp03ILaWXLGRMZffXd4p8hk5nhpUSJQ56AdjasSwM5HnPgSV3C8DU-vJSa46jkQHliHXoiUZrQDqfLLc6hjD8QxWQU10Zfz5JVz2Kb4fcNwryvMdJhR_tcYRiUV0og5D6-PLkkae3KmBEkC9tsXXOLzSv8jM9eGGQZwFwbGDOLQt16VRjR3XA_a_8uWhYad_EQMunPdeiETqwLWVjEnrXL0MKzLJEN127rt0ZMDN3_GcWApKHpYRho24q9YOnE8" },
+  { id: '6', name: "Rose Petal Lip Liner", sub: "Precision Define", price: 22000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCNuNqHpDTC6N3IPpFFBBL0nOBt_OO6IWHt74ygkxqvAdR664On-900ApFUhNCRtrdABUHZ65_BQIrfsahCk4DZvWPgRWMF3_DwjLsYxS0IZXw5NZ3iSMe3tL15OiOuRoOkhM8wgSlGwRNNkgbrxeOnWSxtxrXRomglAJk8HYyKBf48DNPKk1ahzcB4P0Q07c9Nd8PIEg4on3qtqr-DJAGvEHFIhz71DgegOzJ8lVfzcqzMv8cuh_VNdr92Tr_RG8AKpKCB1OViCVE" },
+  { id: '7', name: "Velvet Lip Mask", sub: "Overnight Repair", price: 35000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBGqJXww6B6Wq-XRY4-YMiwcdRZThZeLJ8S02PWZ81FOeiESkkdzsvhHBAag5XOkFkmNa8AQ-ypFrZOa_UZPVNbVC0V6cHD6a9FfW6kXGuBNifNEO6MVdu78VYjAQpMdy_N6qAppo_Peqe0zgV8-0_LNC-HznfLt7mFONy5RsjIj2nYYp-Y3t05f3z7dKOtV4fbF4KiOlPNFclc66gHp6ZTjrTKdPCThVJJTJDgY69O1KoXQAowh-datfXqpYji0NeVpHGZjQQ9UIg" },
+  { id: '8', name: "Glow Hydration Face Mask", sub: "Deep Moisture", price: 40000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAzLEAUcO2O9lgSNRfWuwn3iTrzc2AETR_u72m8reajnJHqOfb8jtqEXot_LI4onz5U7mYilkB1eAeGbvekCVMyvU6bwH2FWyFl0YBIOoR_8gWHTuhM1TQgeMU-C8ASAwZ8BBBrmXrMZHZdWAuuUq-5fF5cBEfGPF5f7YzpXzehVc3m5Yb9xP7-bK0M3AzHkvwgdNhgKKXiN5ob3lPmzRDUkIYiLDJSdthI8CMM8whSqIumr3mvYVHeIcK4V_QQSlVAqH8eFkTGYWQ" },
+  { id: '9', name: "Sugar Kiss Lip Scrub", sub: "Exfoliating", price: 18000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuByY4UWFbo67-ZYxSqQdVTFutE4gp1h1JPd3b5O1k71rdcJ_z95yQirgOvO-OYqwPq7aLqJ_GInwGgoSg8gWsLCCBHeqtWY3AQY-U1w1kV9QpBPq8-YlpO3VI5XaOxmaCV6w_bnYQJP6w3VQlIZMvdHp_wBJ_5ojvqHcaaJke-eU6Bn5XIJ68uBkDj04Zm54ocdj48VO4RGaICO4gA5pxRGd6A8SjZ_5kDlKmRf58cMBpQpoji6BgErQodzjbnEjH391PB0yf9UMG8" },
+  { id: '10', name: "Plush Beauty Headband", sub: "Soft Pink", price: 15000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAq1p7bQY7iihF753CHbcNtFf26vESdRcFICULbtYX_vRy3g5y9qnFZSy5fCvh3Z70PQth_kYlCQt3FwZYZOUZSs506GCmuhNwpggT_rOY4opRvs4-uCkTzvcKw_KPS1kJtok7vahwk0l9urW7QENVFr-OAddONPE4XAaHfsPclY7ZyTk6AjypxmKdKRm9uManlbEAq0kzVHkvQlcCx4F_-9vWFAfmEz6M2VCY26sDpGcFphgXVgGOjZXpIfgOxkCun2NO2U6LjD68" },
+  { id: '11', name: "Diamond Shine Gloss", sub: "Sparkle Finish", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDJxF7ArW7cz8BJkNhJpMf6Zhg48Gq23-oUMjn5YCMunP9UlBdLr_GIc5LuR3BSRuCl-mFjlgcV7zdY_ToOGlWi0TfSxXhMUQXlDhXwzXfI96h8RKDUrd_BdxCACb3h0Cho6vRdVt1GuRhd0McDFRrk8ynIY6Lse8D5uvMTZ1jlMz9ttpBcXHDmU1w8QtavojGnHH4z0KMG941Nkr1tcbmsTAGdaWWqNMeBVWGM1P6jrKWZUSRY3UthiMVsyJ7jks3tYMQvifHrz-I" },
+  { id: '12', name: "Nude Attitude Lip Liner", sub: "Natural Shade", price: 22000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMO72ZznnFJse2TrsAfr265Wedb_JovSJVE63eM46PfvB8isVpZF_gboS5T7Q2BDxiSXkz16DQuuoZQ_YCBsRAI_Exbt2NqXFqeXLhIaQ8t9RJrNGWxbZs5CXV_hKehEFIp5Vk0rALSDpTkfq5xdS1rZsIXLSZSMIFgJ1X8Wy58ZEjXW52uZt_J85JpiUihvw_LJ7bxde6ksCTkpgrosXHyB1iZOHiNw8oMLDv2eGABgsDN12DI7rjdKrZoMvg8SqPoPlUuEyTDk4" },
+];
+
+const formatPrice = (price: number) => `₦${price.toLocaleString()}`;
+
 // --- Shared Components ---
 
 const Header = ({ activePage, navigate, cartCount, user }: { activePage: Page, navigate: (p: Page) => void, cartCount: number, user: User | null }) => {
@@ -126,7 +156,7 @@ const Footer = ({ navigate }: { navigate: (p: Page) => void }) => (
 
 // --- Pages ---
 
-const HomePage = ({ navigate }: { navigate: (p: Page) => void }) => (
+const HomePage = ({ navigate, addToCart }: { navigate: (p: Page) => void, addToCart: (p: Product) => void }) => (
   <div className="flex flex-col w-full">
     <section className="w-full px-4 py-12 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 rounded-3xl bg-cover bg-center bg-no-repeat p-8 text-center shadow-sm overflow-hidden relative" 
@@ -144,21 +174,22 @@ const HomePage = ({ navigate }: { navigate: (p: Page) => void }) => (
     <section className="w-full max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
       <h2 className="mb-10 text-center text-3xl font-bold tracking-tight text-text-light font-serif">Discover Our Best Sellers</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {[
-          { name: "Luxe Lip Oil", sub: "Crystal Clear", price: "$28.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDKj21ZbHEbXYRtj7j6uGi5ly-LNfWv14P0T_rBJ7aB-oqSmMH9LQnMUKKnocX1OSNcogTjVYb5Y5zBteVhphmi3GKAuxsMn4Xlg6nhOu6wlJ_u2AYY3puxrP2Z_VjYn1Oks_N7bnV9pR1mqlgnBQCv82tdCkiph4nbL6Jp8JHfptGdMInBOG2N8ue80Bo0zy-VN328MutjoPoOB-rlPgezsKv3j6kTQYKh6Zk8eFoMI8WnYgdJZXrJ7WkCUVDUiD_Go3REg__VzeQ" },
-          { name: "Radiant Serum", sub: "Hydrating Elixir", price: "$45.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuACYOX2EDB6sFMQZ7gVxQwv7MAQiTBgPoJL2cFNTPYPvDS5pGCqmkPIwRiDYPjagdYqdvlF9REXZOXlhD37uIpa7IyMo9gpO9Th4BZYQBLknkSjfODHpW6F9P9cy78lBr-sngMKCAKvXRZW-YK0Loe0E84Sy0FoA2xSJgU9sQZF5Ur69zxpadxW69DnEWhPMroUOwvyOaHtxLuFt37iEvZnmCF0p9Ra-bvIHvpKo7DDwToSkNRJyClJR1hxwVWJD02mhaN_Oluur1Q" },
-          { name: "Glow Foundation", sub: "Shade 2N", price: "$52.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDcykf455oiIm92LkgTJDw4C4PU15P0FKToSg6w71z13rUBqu_pXYbAAR11RqEXkHMSkHel4EHxpFxsT-cPSAlkb9henIyY2GeSdF9yiZ30myYNbSPQbz34mrlUm81SWjdL-7L1hYHWR268CrXMAuKzVYWS5EV8vuyleRti9S8o4R1MnDZ-NAlQnIInGe4eIkfRlCrjbbjso9cqwdGZpk5vHxSkqv1ie3cOeLFHawImWrRAhEsko6OH3QfhemNcE0BTCcZgOq-jLmY" },
-          { name: "Velvet Matte Lipstick", sub: "Rose Petal", price: "$34.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAR4v4uEHHtakPxFT5H_tei_p7400lDW7vdCYZGSpB6aGMPx569l--qVDlMkSzRZjyJv22tYALeeVTMwJhnT3RvJJuU_z2jEnD_Y2PxZhMvSApf6swCBRyC2jgkGqRTAIX4Zk5mm_U2cAp6iJ6HfDIKxf7sOKoNQqW7MeIm4Lwlz153s6I8KVlDLXqwjwyzm_6eS_i311EXkeAwI2MRQL4Wh1f5Lm1lHIljPBm3Tlh1q0qwCvT1GNFL9niwktgqN9khwz8AL5J63mg" }
-        ].map((item, idx) => (
-          <div key={idx} className="group flex flex-col gap-3 cursor-pointer" onClick={() => navigate('product')}>
+        {PRODUCTS.slice(0, 4).map((item) => (
+          <div key={item.id} className="group flex flex-col gap-3 cursor-pointer" onClick={() => navigate('product')}>
             <div className="w-full aspect-[3/4] bg-subtle-light rounded-xl overflow-hidden">
               <div className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{ backgroundImage: `url(${item.img})` }}></div>
             </div>
             <div>
               <p className="text-lg font-bold text-text-light">{item.name}</p>
               <p className="text-sm text-text-muted-light">{item.sub}</p>
-              <p className="mt-1 font-medium text-text-light">{item.price}</p>
+              <p className="mt-1 font-medium text-text-light">{formatPrice(item.price)}</p>
             </div>
+            <button 
+              onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+              className="mt-2 w-full h-10 rounded-lg bg-primary text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-all"
+            >
+              Add to Cart
+            </button>
           </div>
         ))}
       </div>
@@ -179,19 +210,8 @@ const HomePage = ({ navigate }: { navigate: (p: Page) => void }) => (
   </div>
 );
 
-const ShopPage = ({ navigate }: { navigate: (p: Page) => void }) => {
+const ShopPage = ({ navigate, addToCart }: { navigate: (p: Page) => void, addToCart: (p: Product) => void }) => {
   const categories = ['All Products', 'Lip Gloss', 'Lip Liners', 'Lip Masks', 'Face Masks', 'Lip Scrubs', 'Accessories'];
-  
-  const products = [
-    { name: "Crystal Clear Gloss", price: "$28.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6B2ky3Wv5aQQNEp03ILaWXLGRMZffXd4p8hk5nhpUSJQ56AdjasSwM5HnPgSV3C8DU-vJSa46jkQHliHXoiUZrQDqfLLc6hjD8QxWQU10Zfz5JVz2Kb4fcNwryvMdJhR_tcYRiUV0og5D6-PLkkae3KmBEkC9tsXXOLzSv8jM9eGGQZwFwbGDOLQt16VRjR3XA_a_8uWhYad_EQMunPdeiETqwLWVjEnrXL0MKzLJEN127rt0ZMDN3_GcWApKHpYRho24q9YOnE8" },
-    { name: "Rose Petal Lip Liner", price: "$22.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCNuNqHpDTC6N3IPpFFBBL0nOBt_OO6IWHt74ygkxqvAdR664On-900ApFUhNCRtrdABUHZ65_BQIrfsahCk4DZvWPgRWMF3_DwjLsYxS0IZXw5NZ3iSMe3tL15OiOuRoOkhM8wgSlGwRNNkgbrxeOnWSxtxrXRomglAJk8HYyKBf48DNPKk1ahzcB4P0Q07c9Nd8PIEg4on3qtqr-DJAGvEHFIhz71DgegOzJ8lVfzcqzMv8cuh_VNdr92Tr_RG8AKpKCB1OViCVE" },
-    { name: "Velvet Lip Mask", price: "$35.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBGqJXww6B6Wq-XRY4-YMiwcdRZThZeLJ8S02PWZ81FOeiESkkdzsvhHBAag5XOkFkmNa8AQ-ypFrZOa_UZPVNbVC0V6cHD6a9FfW6kXGuBNifNEO6MVdu78VYjAQpMdy_N6qAppo_Peqe0zgV8-0_LNC-HznfLt7mFONy5RsjIj2nYYp-Y3t05f3z7dKOtV4fbF4KiOlPNFclc66gHp6ZTjrTKdPCThVJJTJDgY69O1KoXQAowh-datfXqpYji0NeVpHGZjQQ9UIg" },
-    { name: "Glow Hydration Face Mask", price: "$40.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAzLEAUcO2O9lgSNRfWuwn3iTrzc2AETR_u72m8reajnJHqOfb8jtqEXot_LI4onz5U7mYilkB1eAeGbvekCVMyvU6bwH2FWyFl0YBIOoR_8gWHTuhM1TQgeMU-C8ASAwZ8BBBrmXrMZHZdWAuuUq-5fF5cBEfGPF5f7YzpXzehVc3m5Yb9xP7-bK0M3AzHkvwgdNhgKKXiN5ob3lPmzRDUkIYiLDJSdthI8CMM8whSqIumr3mvYVHeIcK4V_QQSlVAqH8eFkTGYWQ" },
-    { name: "Sugar Kiss Lip Scrub", price: "$18.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuByY4UWFbo67-ZYxSqQdVTFutE4gp1h1JPd3b5O1k71rdcJ_z95yQirgOvO-OYqwPq7aLqJ_GInwGgoSg8gWsLCCBHeqtWY3AQY-U1w1kV9QpBPq8-YlpO3VI5XaOxmaCV6w_bnYQJP6w3VQlIZMvdHp_wBJ_5ojvqHcaaJke-eU6Bn5XIJ68uBkDj04Zm54ocdj48VO4RGaICO4gA5pxRGd6A8SjZ_5kDlKmRf58cMBpQpoji6BgErQodzjbnEjH391PB0yf9UMG8" },
-    { name: "Plush Beauty Headband", price: "$15.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAq1p7bQY7iihF753CHbcNtFf26vESdRcFICULbtYX_vRy3g5y9qnFZSy5fCvh3Z70PQth_kYlCQt3FwZYZOUZSs506GCmuhNwpggT_rOY4opRvs4-uCkTzvcKw_KPS1kJtok7vahwk0l9urW7QENVFr-OAddONPE4XAaHfsPclY7ZyTk6AjypxmKdKRm9uManlbEAq0kzVHkvQlcCx4F_-9vWFAfmEz6M2VCY26sDpGcFphgXVgGOjZXpIfgOxkCun2NO2U6LjD68" },
-    { name: "Diamond Shine Gloss", price: "$28.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDJxF7ArW7cz8BJkNhJpMf6Zhg48Gq23-oUMjn5YCMunP9UlBdLr_GIc5LuR3BSRuCl-mFjlgcV7zdY_ToOGlWi0TfSxXhMUQXlDhXwzXfI96h8RKDUrd_BdxCACb3h0Cho6vRdVt1GuRhd0McDFRrk8ynIY6Lse8D5uvMTZ1jlMz9ttpBcXHDmU1w8QtavojGnHH4z0KMG941Nkr1tcbmsTAGdaWWqNMeBVWGM1P6jrKWZUSRY3UthiMVsyJ7jks3tYMQvifHrz-I" },
-    { name: "Nude Attitude Lip Liner", price: "$22.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMO72ZznnFJse2TrsAfr265Wedb_JovSJVE63eM46PfvB8isVpZF_gboS5T7Q2BDxiSXkz16DQuuoZQ_YCBsRAI_Exbt2NqXFqeXLhIaQ8t9RJrNGWxbZs5CXV_hKehEFIp5Vk0rALSDpTkfq5xdS1rZsIXLSZSMIFgJ1X8Wy58ZEjXW52uZt_J85JpiUihvw_LJ7bxde6ksCTkpgrosXHyB1iZOHiNw8oMLDv2eGABgsDN12DI7rjdKrZoMvg8SqPoPlUuEyTDk4" },
-  ];
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -206,8 +226,8 @@ const ShopPage = ({ navigate }: { navigate: (p: Page) => void }) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {products.map((item, idx) => (
-          <div key={idx} className="group flex flex-col gap-4" onClick={() => navigate('product')}>
+        {PRODUCTS.map((item) => (
+          <div key={item.id} className="group flex flex-col gap-4" onClick={() => navigate('product')}>
             <div className="relative w-full aspect-[3/4] bg-subtle-light rounded-xl overflow-hidden cursor-pointer">
               <div className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{ backgroundImage: `url(${item.img})` }}></div>
               <button className="absolute top-3 right-3 flex items-center justify-center w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm text-text-light opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-primary hover:text-white">
@@ -216,8 +236,11 @@ const ShopPage = ({ navigate }: { navigate: (p: Page) => void }) => {
             </div>
             <div className="text-center">
               <h3 className="text-lg font-medium text-text-light cursor-pointer hover:text-primary">{item.name}</h3>
-              <p className="text-sm text-text-muted-light mt-1">{item.price}</p>
-              <button className="mt-3 w-full max-w-[160px] h-10 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 duration-300 mx-auto block">
+              <p className="text-sm text-text-muted-light mt-1">{formatPrice(item.price)}</p>
+              <button 
+                onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+                className="mt-3 w-full max-w-[160px] h-10 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 duration-300 mx-auto block"
+              >
                 Add to Cart
               </button>
             </div>
@@ -237,72 +260,113 @@ const ShopPage = ({ navigate }: { navigate: (p: Page) => void }) => {
   );
 };
 
-const ProductPage = ({ navigate }: { navigate: (p: Page) => void }) => (
-  <div className="w-full max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
-    <div className="flex items-center gap-2 text-sm text-text-muted-light mb-8">
-      <span className="hover:text-primary cursor-pointer" onClick={() => navigate('home')}>Home</span>
-      <span>/</span>
-      <span className="hover:text-primary cursor-pointer" onClick={() => navigate('shop')}>Lip Gloss</span>
-      <span>/</span>
-      <span className="text-text-light font-medium">Luxe Shine</span>
-    </div>
+const ProductPage = ({ navigate, addToCart, toggleWishlist, isInWishlist }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean }) => {
+  const [activeTab, setActiveTab] = useState<'description' | 'ingredients' | 'reviews'>('description');
+  const product = PRODUCTS[0]; // Displaying the first product as example for Product Details page
 
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-      <div className="flex flex-col-reverse md:flex-row gap-4">
-        <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible">
-          {[
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuCnGUgg5iI5A7vNf2mgSv5e1TcxHkOx0rmoPSkrEwqJj3Mg-KMogoPbG99ZxcAiXcKDgT_UqjJbi1s0TtvVqJvvpT3FS5pTfaSUW5kqFgZeVXNyw-15a6QPCsJ_9jIl7NQR77gYLL0E3b2zlv_jDCXIa5v8Zg2w3JVKbEpVT0iUt1SDTLarBOf42Jm9eFFYtnLJKP1dvZHuO8ypivrDFu3DS8T3I6rSPuWWoFqKj8EskHoYavjwe_kmM7EQP0epBhzcy6ZXg1FQtZk",
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuBwTIqxLxc73x-O84l68mY35Qb3asmRXY5bXsPAer1gga6M6DYy3JF0hbUzSuqcz2zbDrmSdaXnGyUko70Ydx61zTOz2uPMSMZsW7331SqoHBDoJi08THBOlTL76_GdX5P-DlJQek_-JzWIpG_uqAe-hWp1gja899enTZ70f2GeuN1SpF0_QgJzTklvs-DZ3mGEl9Q_ZeYxoJOQFXuEf3kpAYgoNafcgrQyq0JyH1QDe6zJvV8E9EQ6Xe7pEmz9a2Tn7qSxl985ZqA",
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuBCjlemriFiW-h-Y0AFzToGMt2ud3LZAi2RxaEvtCotxQJ3-LAucOTYV1e3PTGMKmaFSv_tpCqtLsNbDC5DDA7LrrJHMEU2i3uDKNe3eKhMFjOCKgOhIlR4ZomYZWrbrZF21KuR0LAnV1VwqHb1tVnUBH9JMWq8aUeKOST0BVtVW7N89dLK0E_VL9GdqNoTIK_ZCd6hrpH97qHU4KSjUUS6La_4m8RboJ-jhkUA2OLM8E86Ic4MurqFvUZO7KLDVsLpuZ26QKlg4uw"
-          ].map((img, i) => (
-            <div key={i} className={`w-20 h-20 rounded-lg bg-cover bg-center cursor-pointer border-2 ${i === 0 ? 'border-primary' : 'border-transparent hover:border-primary/50'}`} style={{ backgroundImage: `url(${img})` }}></div>
-          ))}
-        </div>
-        <div className="flex-1 aspect-[4/5] rounded-xl bg-cover bg-center" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCerzxNisJ_Vb07Wgpl1tW20tRBSmxxNgFfvpsrBaH5Y3AmZ-vlvyF0f8rCu9uhlPb3rUs8jEfCP32qf4LShdIPXk2q7uut1BKjLxTE14nh4zgmJWTRGukUUPDofnjKBj1iu7nIFq1uTi2065uQvnFCrOk9GQqrerKsF-uByfJTInPGCwM02tyzqlc30xkElyrBqIvz-sI0dGdBFcdD-AmNfCWG5ppGfPkjqzrs8MFEKcybgEYSTQ4fx3LIS13tIRe4Bf4MWofPJ-I")' }}></div>
+  return (
+    <div className="w-full max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+      <div className="flex items-center gap-2 text-sm text-text-muted-light mb-8">
+        <span className="hover:text-primary cursor-pointer" onClick={() => navigate('home')}>Home</span>
+        <span>/</span>
+        <span className="hover:text-primary cursor-pointer" onClick={() => navigate('shop')}>Lip Gloss</span>
+        <span>/</span>
+        <span className="text-text-light font-medium">{product.name}</span>
       </div>
 
-      <div className="flex flex-col">
-        <h1 className="text-4xl font-serif font-bold text-text-light mb-2">Luxe Shine Lip Gloss</h1>
-        <p className="text-lg text-text-muted-light mb-4">A high-shine, nourishing gloss for luscious lips.</p>
-        
-        <div className="flex items-center gap-2 mb-6">
-          <div className="flex text-primary">
-            {[1,2,3,4].map(i => <span key={i} className="material-symbols-outlined filled text-lg">star</span>)}
-            <span className="material-symbols-outlined text-lg">star</span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="flex flex-col-reverse md:flex-row gap-4">
+          <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible">
+            {[
+              "https://lh3.googleusercontent.com/aida-public/AB6AXuCnGUgg5iI5A7vNf2mgSv5e1TcxHkOx0rmoPSkrEwqJj3Mg-KMogoPbG99ZxcAiXcKDgT_UqjJbi1s0TtvVqJvvpT3FS5pTfaSUW5kqFgZeVXNyw-15a6QPCsJ_9jIl7NQR77gYLL0E3b2zlv_jDCXIa5v8Zg2w3JVKbEpVT0iUt1SDTLarBOf42Jm9eFFYtnLJKP1dvZHuO8ypivrDFu3DS8T3I6rSPuWWoFqKj8EskHoYavjwe_kmM7EQP0epBhzcy6ZXg1FQtZk",
+              "https://lh3.googleusercontent.com/aida-public/AB6AXuBwTIqxLxc73x-O84l68mY35Qb3asmRXY5bXsPAer1gga6M6DYy3JF0hbUzSuqcz2zbDrmSdaXnGyUko70Ydx61zTOz2uPMSMZsW7331SqoHBDoJi08THBOlTL76_GdX5P-DlJQek_-JzWIpG_uqAe-hWp1gja899enTZ70f2GeuN1SpF0_QgJzTklvs-DZ3mGEl9Q_ZeYxoJOQFXuEf3kpAYgoNafcgrQyq0JyH1QDe6zJvV8E9EQ6Xe7pEmz9a2Tn7qSxl985ZqA",
+              "https://lh3.googleusercontent.com/aida-public/AB6AXuBCjlemriFiW-h-Y0AFzToGMt2ud3LZAi2RxaEvtCotxQJ3-LAucOTYV1e3PTGMKmaFSv_tpCqtLsNbDC5DDA7LrrJHMEU2i3uDKNe3eKhMFjOCKgOhIlR4ZomYZWrbrZF21KuR0LAnV1VwqHb1tVnUBH9JMWq8aUeKOST0BVtVW7N89dLK0E_VL9GdqNoTIK_ZCd6hrpH97qHU4KSjUUS6La_4m8RboJ-jhkUA2OLM8E86Ic4MurqFvUZO7KLDVsLpuZ26QKlg4uw"
+            ].map((img, i) => (
+              <div key={i} className={`w-20 h-20 rounded-lg bg-cover bg-center cursor-pointer border-2 ${i === 0 ? 'border-primary' : 'border-transparent hover:border-primary/50'}`} style={{ backgroundImage: `url(${img})` }}></div>
+            ))}
           </div>
-          <span className="text-sm text-text-muted-light">(121 reviews)</span>
+          <div className="flex-1 aspect-[4/5] rounded-xl bg-cover bg-center" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCerzxNisJ_Vb07Wgpl1tW20tRBSmxxNgFfvpsrBaH5Y3AmZ-vlvyF0f8rCu9uhlPb3rUs8jEfCP32qf4LShdIPXk2q7uut1BKjLxTE14nh4zgmJWTRGukUUPDofnjKBj1iu7nIFq1uTi2065uQvnFCrOk9GQqrerKsF-uByfJTInPGCwM02tyzqlc30xkElyrBqIvz-sI0dGdBFcdD-AmNfCWG5ppGfPkjqzrs8MFEKcybgEYSTQ4fx3LIS13tIRe4Bf4MWofPJ-I")' }}></div>
         </div>
 
-        <p className="text-3xl font-bold text-text-light mb-8">$28.00</p>
-
-        <div className="flex items-center gap-6 mb-8">
-          <div className="flex items-center border border-border-color rounded-lg">
-            <button className="px-4 py-3 text-text-muted-light hover:bg-subtle-light transition-colors">-</button>
-            <span className="w-12 text-center font-medium">1</span>
-            <button className="px-4 py-3 text-text-muted-light hover:bg-subtle-light transition-colors">+</button>
+        <div className="flex flex-col">
+          <h1 className="text-4xl font-serif font-bold text-text-light mb-2">{product.name}</h1>
+          <p className="text-lg text-text-muted-light mb-4">{product.sub}</p>
+          
+          <div className="flex items-center gap-2 mb-6">
+            <div className="flex text-primary">
+              {[1,2,3,4].map(i => <span key={i} className="material-symbols-outlined filled text-lg">star</span>)}
+              <span className="material-symbols-outlined text-lg">star</span>
+            </div>
+            <span className="text-sm text-text-muted-light">(121 reviews)</span>
           </div>
-          <button onClick={() => navigate('cart')} className="flex-1 h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-md">
-            Add to Cart
-          </button>
-          <button className="h-12 w-12 flex items-center justify-center border border-border-color rounded-lg hover:bg-subtle-light transition-colors text-text-muted-light">
-            <span className="material-symbols-outlined">favorite</span>
-          </button>
-        </div>
 
-        <div className="border-t border-border-color pt-8">
-          <div className="flex gap-8 border-b border-border-color mb-6">
-            <button className="pb-3 border-b-2 border-primary font-bold text-text-light">Description</button>
-            <button className="pb-3 border-b-2 border-transparent font-medium text-text-muted-light hover:text-primary">Ingredients</button>
-            <button className="pb-3 border-b-2 border-transparent font-medium text-text-muted-light hover:text-primary">Reviews</button>
+          <p className="text-3xl font-bold text-text-light mb-8">{formatPrice(product.price)}</p>
+
+          <div className="flex items-center gap-6 mb-8">
+            <button onClick={() => addToCart(product)} className="flex-1 h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-md">
+              Add to Cart
+            </button>
+            <button 
+              onClick={() => toggleWishlist(product)}
+              className={`h-12 w-12 flex items-center justify-center border border-border-color rounded-lg hover:bg-subtle-light transition-colors ${isInWishlist(product.id) ? 'text-primary' : 'text-text-muted-light'}`}
+            >
+              <span className={`material-symbols-outlined ${isInWishlist(product.id) ? 'filled' : ''}`}>favorite</span>
+            </button>
           </div>
-          <p className="text-text-light/80 leading-relaxed">
-            Experience the ultimate in lip luxury with our Luxe Shine Lip Gloss. This formula provides a brilliant, long-lasting shine without the stickiness. Enriched with nourishing Vitamin E and Jojoba Oil, it hydrates and conditions your lips, leaving them feeling soft, supple, and irresistibly smooth.
-          </p>
+
+          <div className="border-t border-border-color pt-8">
+            <div className="flex gap-8 border-b border-border-color mb-6">
+              <button 
+                className={`pb-3 border-b-2 font-medium transition-colors ${activeTab === 'description' ? 'border-primary text-text-light font-bold' : 'border-transparent text-text-muted-light hover:text-primary'}`}
+                onClick={() => setActiveTab('description')}
+              >
+                Description
+              </button>
+              <button 
+                className={`pb-3 border-b-2 font-medium transition-colors ${activeTab === 'ingredients' ? 'border-primary text-text-light font-bold' : 'border-transparent text-text-muted-light hover:text-primary'}`}
+                onClick={() => setActiveTab('ingredients')}
+              >
+                Ingredients
+              </button>
+              <button 
+                className={`pb-3 border-b-2 font-medium transition-colors ${activeTab === 'reviews' ? 'border-primary text-text-light font-bold' : 'border-transparent text-text-muted-light hover:text-primary'}`}
+                onClick={() => setActiveTab('reviews')}
+              >
+                Reviews
+              </button>
+            </div>
+            <div className="text-text-light/80 leading-relaxed min-h-[150px]">
+              {activeTab === 'description' && (
+                <p>Experience the ultimate in lip luxury with our Luxe Shine Lip Gloss. This formula provides a brilliant, long-lasting shine without the stickiness. Enriched with nourishing Vitamin E and Jojoba Oil, it hydrates and conditions your lips, leaving them feeling soft, supple, and irresistibly smooth.</p>
+              )}
+              {activeTab === 'ingredients' && (
+                <p>Polybutene, Octyldodecanol, Bis-Diglyceryl Polyacyladipate-2, Tricaprylin, Cera Microcristallina (Microcrystalline Wax), Euphorbia Cerifera (Candelilla) Wax, Ricinus Communis (Castor) Seed Oil, Silica Dimethyl Silylate, Butyrospermum Parkii (Shea) Butter, VP/Eicosene Copolymer, VP/Hexadecene Copolymer, Octyldodecyl Stearoyl Stearate, Simmondsia Chinensis (Jojoba) Seed Oil, Tocopheryl Acetate.</p>
+              )}
+              {activeTab === 'reviews' && (
+                <div className="space-y-4">
+                  <div className="border-b border-subtle-light pb-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-text-light">Sarah J.</span>
+                      <div className="flex text-primary text-xs"><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span></div>
+                    </div>
+                    <p className="text-sm">Best gloss I've ever used. Not sticky at all!</p>
+                  </div>
+                  <div className="border-b border-subtle-light pb-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-text-light">Emily R.</span>
+                       <div className="flex text-primary text-xs"><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span></div>
+                    </div>
+                    <p className="text-sm">Love the shine and the smell is amazing.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AboutPage = () => (
   <div className="w-full">
@@ -365,59 +429,69 @@ const TestimonialsPage = () => (
   </div>
 );
 
-const CartPage = ({ navigate }: { navigate: (p: Page) => void }) => (
-  <div className="w-full max-w-6xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
-    <h1 className="text-4xl font-black text-text-light mb-10">Shopping Cart</h1>
-    
-    <div className="grid lg:grid-cols-3 gap-12">
-      <div className="lg:col-span-2 flex flex-col gap-6">
-        {[
-          { name: "Luxe Lip Oil", sub: "Rose Petal", price: "$28.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD4iOxgLp-QQYmLjyhnKmL_3eBL-xvVqxSnzuo3tQ0nRWgSe40G39k_r613bcMcc_dbKBJo-Bok7Wzqd33ydVv4VOUn9DLIwOFd5MFLNN3ACal4d9D1L_NzNpf3AWmHcs6vptkMM4c31RT8sN6jaxHgoLNtW28VPcmCDkd3vG6yqqaSuo7R_S9GlPvZ40UfI3JhS9ZK2yeQAYqR9N2uD4RBdJ1FdzO7YYd4rFtFvGXgFUDT5OpBao3aTCuFctPRfHOuxvHv0iI7ipw" },
-          { name: "Radiant Glow Serum", sub: "30ml", price: "$45.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCjf8yMin0oBERQYkw22cYqxQmwsyaomQF243aN9d7Gx9IXRrT4ul3VglzDJR7PBhQlopGQDAqhpXJZc6akyJ0qqFEBEdfKQ-AUAEQsU8WbG0KuAmM47aqhK-aKaLzR4KwuwJthztAbcYl4iSjrSSpoakBg9wETP7tPH-igI50bxFOl-80ErxJ_y3FbJK5LoI655AMeaCRpeYKYcolwQAA8WBCiMqi8A5IkbtFV7G-x1eg3Uyiz0QlvISDKuL0ny-ADil95fDE_6S0" }
-        ].map((item, i) => (
-          <div key={i} className="flex gap-6 py-6 border-b border-subtle-light items-center">
-            <div className="w-24 h-24 bg-subtle-light rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${item.img})` }}></div>
-            <div className="flex-1">
-              <h3 className="font-medium text-lg text-text-light">{item.name}</h3>
-              <p className="text-text-muted-light">{item.sub}</p>
-              <p className="text-text-muted-light mt-1">{item.price}</p>
-            </div>
-            <div className="flex items-center border border-border-color rounded-lg h-10">
-              <button className="px-3 text-text-muted-light hover:text-primary">-</button>
-              <span className="w-8 text-center text-sm">1</span>
-              <button className="px-3 text-text-muted-light hover:text-primary">+</button>
-            </div>
-          </div>
-        ))}
-      </div>
+const CartPage = ({ navigate, cartItems, updateQuantity }: { navigate: (p: Page) => void, cartItems: CartItem[], updateQuantity: (id: string, delta: number) => void }) => {
+  const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
-      <div className="lg:col-span-1">
-        <div className="bg-white p-8 rounded-xl shadow-sm border border-subtle-light">
-          <h3 className="text-xl font-bold text-text-light mb-6">Order Summary</h3>
-          <div className="space-y-4 mb-6">
-            <div className="flex justify-between text-text-muted-light">
-              <span>Subtotal</span>
-              <span className="text-text-light font-medium">$73.00</span>
-            </div>
-            <div className="flex justify-between text-text-muted-light">
-              <span>Shipping</span>
-              <span className="text-text-light font-medium">Calculated at next step</span>
-            </div>
-          </div>
-          <div className="border-t border-subtle-light pt-4 mb-8">
-            <div className="flex justify-between text-lg font-bold text-text-light">
-              <span>Total</span>
-              <span>$73.00</span>
-            </div>
-          </div>
-          <button onClick={() => navigate('checkout')} className="w-full h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors">
-            Proceed to Checkout
+  return (
+    <div className="w-full max-w-6xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+      <h1 className="text-4xl font-black text-text-light mb-10">Shopping Cart</h1>
+      
+      {cartItems.length === 0 ? (
+        <div className="text-center py-20">
+          <p className="text-xl text-text-muted-light mb-6">Your cart is currently empty.</p>
+          <button onClick={() => navigate('shop')} className="h-12 px-8 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors">
+            Return to Shop
           </button>
         </div>
-      </div>
+      ) : (
+        <div className="grid lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            {cartItems.map((item, i) => (
+              <div key={i} className="flex gap-6 py-6 border-b border-subtle-light items-center">
+                <div className="w-24 h-24 bg-subtle-light rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${item.img})` }}></div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-lg text-text-light">{item.name}</h3>
+                  <p className="text-text-muted-light">{item.sub}</p>
+                  <p className="text-text-muted-light mt-1">{formatPrice(item.price)}</p>
+                </div>
+                <div className="flex items-center border border-border-color rounded-lg h-10">
+                  <button onClick={() => updateQuantity(item.id, -1)} className="px-3 text-text-muted-light hover:text-primary">-</button>
+                  <span className="w-8 text-center text-sm">{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item.id, 1)} className="px-3 text-text-muted-light hover:text-primary">+</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="lg:col-span-1">
+            <div className="bg-white p-8 rounded-xl shadow-sm border border-subtle-light">
+              <h3 className="text-xl font-bold text-text-light mb-6">Order Summary</h3>
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between text-text-muted-light">
+                  <span>Subtotal</span>
+                  <span className="text-text-light font-medium">{formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-text-muted-light">
+                  <span>Shipping</span>
+                  <span className="text-text-light font-medium">Calculated at next step</span>
+                </div>
+              </div>
+              <div className="border-t border-subtle-light pt-4 mb-8">
+                <div className="flex justify-between text-lg font-bold text-text-light">
+                  <span>Total</span>
+                  <span>{formatPrice(subtotal)}</span>
+                </div>
+              </div>
+              <button onClick={() => navigate('checkout')} className="w-full h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors">
+                Proceed to Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 const CheckoutPage = () => (
   <div className="w-full max-w-3xl mx-auto px-4 py-12">
@@ -466,7 +540,7 @@ const CheckoutPage = () => (
       </div>
 
       <button className="w-full h-14 bg-primary text-white text-lg font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-lg">
-        Place Order - $78.83
+        Place Order
       </button>
     </div>
   </div>
@@ -533,37 +607,50 @@ const ContactPage = () => (
   </div>
 );
 
-const WishlistPage = () => (
+const WishlistPage = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart }: { wishlistItems: Product[], addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, addAllToCart: (items: Product[]) => void }) => (
   <div className="w-full max-w-7xl mx-auto px-4 py-12">
     <h1 className="text-4xl font-black text-text-light mb-8">My Wishlist</h1>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-      {[
-        { name: "Luminous Silk Lip Oil", price: "$32.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBCrwPUgoNCVykY3MExpAemdrgw2vZEH1eiQeVW4o2JbDuVWsY7sKdtJVgehK-7obruw0yRMJSP5_wpQUgGaVWnGVx5FyOYd-059sNgAH_1l6-uUSUzAQ5jybtmcIg5vNeoS5ntHtPP7eX9WGxOlv1eZQlLdzRK74wq1CI_f9Jw73lAsNqR6RI7ZFy5OjhKTmDDSE_ab6xxGJRRnFziHVF-ustGl7Lgrnt8T8Y76G6j67KEw0-CPXyA8-0fAsywhzD3HOOKsVbymB4" },
-        { name: "Velvet Matte Lipstick", price: "$38.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBOWB0SKxQDA-c1EfmiCMV2mvEftMCZZTtvr7Rw967QuDbxHRvun0lzUn4syZOZEm0x5WsuXtpdEbX0zMgk3nTdMelPJBg5-_T7_QmQ7TkwLoKzuPMQMe_jKi5LfG_-8eR1hP7W8CND5YnKvtkrTs7vUdKQ_7T8mJXisk4J39LmpA1Ot1umzbFm7twSBg_PWHKL_z8jrDve21B-E3Lob_lOUyXUvL9XWq1OP4ZT-0tAv1DfKoi55aND6mKBGc5-nUzz37r_nPdC9mA" },
-        { name: "Glass Skin Highlighter", price: "$45.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDrCjMcTu__vYjbZ4JkLStI3gagubAvUjUhen_NJyJpq9h07Sf5qmelCvnGF3JfyruZ1oxRnxsbn0kuXNmr71sbwakCytgop4LmEIu65wLGF87RBORFc9VyCd7RHvWc40X9b_1GbOQ66eaH-UjMt4Dgv98-6Ir6IiEE85GLWyQrfTmCKIzMR48N-zQYW2dYEGeVKiTpKDwcG5fMt7m6Bbl-3ZeIi8NTeR2RG7NGH5vTy_hF8bcSe3Da8C-JDsmdphbjvIvntjbLyiE" },
-        { name: "Radiant Finish Foundation", price: "$55.00", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDbdSRpa8xi9hlheSldgamkKRG21aEX5swE0RjDIxpO1PNCAH09LV91wDrMWTfhcIojb8IUuGrjmrCqvR2d0DEI5egj5b001TqinZeVvpZ9s0w8kB012LJg1v1-_noFtEcPk157OQHW6VADUCdj79HX-68yFnGp9aIowBagSj1WBhrJ0GrVeuZPsyd3rvJ0xOOtII586hNFmHP8tdQOmpNJl4TIyVHsVP9x87RVd50SjGwRW__daL-Z80sp7vWJLUEdawejaThGu3A" }
-      ].map((item, i) => (
-        <div key={i} className="flex flex-col gap-3 relative group">
-          <div className="w-full aspect-[3/4] rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${item.img})` }}>
-            <button className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="material-symbols-outlined text-sm">close</span>
-            </button>
-          </div>
-          <div className="text-center">
-            <p className="font-medium text-text-light">{item.name}</p>
-            <p className="text-sm text-text-light mt-1">{item.price}</p>
-            <button className="mt-3 w-full h-10 bg-primary text-white font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors">
-              Add to Cart
-            </button>
-          </div>
+    
+    {wishlistItems.length === 0 ? (
+        <div className="text-center py-20">
+          <p className="text-xl text-text-muted-light mb-6">Your wishlist is empty.</p>
         </div>
-      ))}
-    </div>
-    <div className="flex justify-center mt-12">
-      <button className="h-12 px-8 border border-border-color rounded-lg font-bold text-text-light hover:bg-subtle-light transition-colors">
-        Add All to Cart
-      </button>
-    </div>
+    ) : (
+      <>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {wishlistItems.map((item, i) => (
+            <div key={i} className="flex flex-col gap-3 relative group">
+              <div className="w-full aspect-[3/4] rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${item.img})` }}>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); toggleWishlist(item); }}
+                  className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary hover:text-white"
+                >
+                  <span className="material-symbols-outlined text-sm">close</span>
+                </button>
+              </div>
+              <div className="text-center">
+                <p className="font-medium text-text-light">{item.name}</p>
+                <p className="text-sm text-text-light mt-1">{formatPrice(item.price)}</p>
+                <button 
+                  onClick={() => addToCart(item)}
+                  className="mt-3 w-full h-10 bg-primary text-white font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-center mt-12">
+          <button 
+            onClick={() => addAllToCart(wishlistItems)}
+            className="h-12 px-8 border border-border-color rounded-lg font-bold text-text-light hover:bg-subtle-light transition-colors"
+          >
+            Add All to Cart
+          </button>
+        </div>
+      </>
+    )}
   </div>
 );
 
@@ -580,7 +667,7 @@ const ShippingPage = () => (
       <h2 className="text-xl font-bold text-text-light">Processing Time</h2>
       <p>Orders are processed within 1-2 business days. Orders placed on weekends or holidays will be processed the next business day.</p>
       <h2 className="text-xl font-bold text-text-light">Shipping Rates</h2>
-      <p>Standard shipping is free for orders over $50. For orders under $50, a flat rate of $5.99 applies.</p>
+      <p>Standard shipping is free for orders over ₦50,000. For orders under ₦50,000, a flat rate of ₦5,000 applies.</p>
       <h2 className="text-xl font-bold text-text-light">International Shipping</h2>
       <p>We currently ship to select international countries. International shipping rates vary by location and are calculated at checkout.</p>
     </div>
@@ -611,7 +698,7 @@ const FAQPage = () => (
       {[
         { q: "Are your products cruelty-free?", a: "Yes, absolutely! We are proud to be 100% cruelty-free and vegan." },
         { q: "How can I track my order?", a: "Once your order ships, you will receive an email with a tracking number to monitor your shipment." },
-        { q: "Do you offer samples?", a: "We occasionally include free samples with orders over $50. Check our promotions page for current offers." },
+        { q: "Do you offer samples?", a: "We occasionally include free samples with orders over ₦50,000. Check our promotions page for current offers." },
         { q: "Can I change my order after placing it?", a: "We process orders quickly, but if you contact us within 1 hour of placing your order, we will do our best to accommodate changes." }
       ].map((faq, i) => (
         <div key={i} className="bg-white p-6 rounded-xl border border-subtle-light">
@@ -821,8 +908,8 @@ const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
           <h3 className="text-xl font-bold mb-4 text-text-light">Recent Orders</h3>
           <div className="bg-white rounded-xl border border-subtle-light overflow-hidden">
             {[
-              { id: "#10234", date: "Oct 12, 2023", total: "$73.00", status: "Delivered" },
-              { id: "#10201", date: "Sep 05, 2023", total: "$45.00", status: "Delivered" }
+              { id: "#10234", date: "Oct 12, 2023", total: "₦73,000", status: "Delivered" },
+              { id: "#10201", date: "Sep 05, 2023", total: "₦45,000", status: "Delivered" }
             ].map((order, i) => (
               <div key={i} className="flex justify-between items-center p-6 border-b border-subtle-light last:border-0 hover:bg-fbf9fa transition-colors">
                 <div>
@@ -867,25 +954,65 @@ const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
 
 const App = () => {
   const [activePage, setActivePage] = useState<Page>('home');
-  const [cartCount, setCartCount] = useState(2);
   const [user, setUser] = useState<User | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
+
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   // Scroll to top on page change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [activePage]);
 
+  const addToCart = (product: Product) => {
+    setCartItems(prev => {
+      const existing = prev.find(item => item.id === product.id);
+      if (existing) {
+        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+  };
+
+  const updateCartQuantity = (id: string, delta: number) => {
+    setCartItems(prev => prev.map(item => {
+      if (item.id === id) {
+        const newQuantity = Math.max(0, item.quantity + delta);
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    }).filter(item => item.quantity > 0));
+  };
+
+  const toggleWishlist = (product: Product) => {
+    setWishlistItems(prev => {
+      const exists = prev.find(item => item.id === product.id);
+      if (exists) {
+        return prev.filter(item => item.id !== product.id);
+      }
+      return [...prev, product];
+    });
+  };
+
+  const isInWishlist = (id: string) => wishlistItems.some(item => item.id === id);
+
+  const addAllToCart = (items: Product[]) => {
+     items.forEach(item => addToCart(item));
+     setActivePage('cart');
+  };
+
   const renderPage = () => {
     switch (activePage) {
-      case 'home': return <HomePage navigate={setActivePage} />;
-      case 'shop': return <ShopPage navigate={setActivePage} />;
-      case 'product': return <ProductPage navigate={setActivePage} />;
+      case 'home': return <HomePage navigate={setActivePage} addToCart={addToCart} />;
+      case 'shop': return <ShopPage navigate={setActivePage} addToCart={addToCart} />;
+      case 'product': return <ProductPage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />;
       case 'about': return <AboutPage />;
       case 'contact': return <ContactPage />;
       case 'testimonials': return <TestimonialsPage />;
-      case 'cart': return <CartPage navigate={setActivePage} />;
+      case 'cart': return <CartPage navigate={setActivePage} cartItems={cartItems} updateQuantity={updateCartQuantity} />;
       case 'checkout': return <CheckoutPage />;
-      case 'wishlist': return <WishlistPage />;
+      case 'wishlist': return <WishlistPage wishlistItems={wishlistItems} addToCart={addToCart} toggleWishlist={toggleWishlist} addAllToCart={addAllToCart} />;
       
       // New Pages
       case 'shipping': return <ShippingPage />;
@@ -899,7 +1026,7 @@ const App = () => {
       case 'new-password': return <NewPasswordPage navigate={setActivePage} />;
       case 'profile': return user ? <ProfilePage user={user} logout={() => { setUser(null); setActivePage('home'); }} /> : <AuthPage setUser={setUser} navigate={setActivePage} />;
       
-      default: return <HomePage navigate={setActivePage} />;
+      default: return <HomePage navigate={setActivePage} addToCart={addToCart} />;
     }
   };
 
