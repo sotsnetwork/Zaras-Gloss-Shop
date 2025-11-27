@@ -152,7 +152,7 @@ const Header = ({ activePage, navigate, cartCount, user, searchTerm, setSearchTe
   );
 };
 
-const Footer = ({ navigate }: { navigate: (p: Page) => void }) => (
+const Footer = ({ navigate, setCategory }: { navigate: (p: Page) => void, setCategory: (c: Category | 'All Products') => void }) => (
   <footer className="w-full border-t border-black/10 bg-background-light py-10 mt-auto">
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
@@ -167,6 +167,22 @@ const Footer = ({ navigate }: { navigate: (p: Page) => void }) => (
           </div>
           <h2 className="text-lg font-bold tracking-tight font-serif text-text-light">ZARA'S GLOSS</h2>
         </div>
+        
+        {/* Newsletter Signup Form */}
+        <div className="w-full md:w-auto max-w-md">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-text-light mb-3">Subscribe to our Newsletter</h3>
+          <div className="flex">
+            <input 
+              type="email" 
+              placeholder="Enter your email" 
+              className="flex-1 h-10 px-4 rounded-l-lg border border-border-color text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none bg-white"
+            />
+            <button className="h-10 px-6 bg-primary text-white text-sm font-bold rounded-r-lg hover:bg-primary/90 transition-colors">
+              Subscribe
+            </button>
+          </div>
+        </div>
+
         <div className="flex gap-6">
            <a className="hover:text-primary cursor-pointer text-text-light"><i className="material-symbols-outlined">public</i></a>
            <a className="hover:text-primary cursor-pointer text-text-light"><i className="material-symbols-outlined">share</i></a>
@@ -176,10 +192,10 @@ const Footer = ({ navigate }: { navigate: (p: Page) => void }) => (
       <div className="grid grid-cols-2 gap-8 md:grid-cols-4 border-t border-black/10 pt-8">
         <div className="flex flex-col gap-4">
           <h3 className="text-sm font-bold uppercase tracking-wider text-text-light">Shop</h3>
-          <a onClick={() => navigate('shop')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Shop All</a>
-          <a onClick={() => navigate('shop')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Lips</a>
-          <a onClick={() => navigate('shop')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Face</a>
-          <a onClick={() => navigate('shop')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Sets</a>
+          <a onClick={() => { setCategory('All Products'); navigate('shop'); }} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Shop All</a>
+          <a onClick={() => { setCategory('Lip Gloss'); navigate('shop'); }} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Lips</a>
+          <a onClick={() => { setCategory('Face Masks'); navigate('shop'); }} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Face</a>
+          <a onClick={() => { setCategory('All Products'); navigate('shop'); }} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Sets</a>
         </div>
         <div className="flex flex-col gap-4">
           <h3 className="text-sm font-bold uppercase tracking-wider text-text-light">Support</h3>
@@ -247,7 +263,7 @@ const QuickViewModal = ({ product, isOpen, onClose, addToCart, toggleWishlist, i
 
 // --- Pages ---
 
-const HomePage = ({ navigate, addToCart, toggleWishlist, isInWishlist, currency }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean, currency: Currency }) => {
+const HomePage = ({ navigate, addToCart, toggleWishlist, isInWishlist, currency, setCategory }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean, currency: Currency, setCategory: (c: Category | 'All Products') => void }) => {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
   return (
@@ -334,9 +350,8 @@ const HomePage = ({ navigate, addToCart, toggleWishlist, isInWishlist, currency 
   );
 };
 
-const ShopPage = ({ navigate, addToCart, searchTerm, toggleWishlist, isInWishlist, currency }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, searchTerm: string, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean, currency: Currency }) => {
+const ShopPage = ({ navigate, addToCart, searchTerm, toggleWishlist, isInWishlist, currency, selectedCategory, setSelectedCategory }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, searchTerm: string, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean, currency: Currency, selectedCategory: Category | 'All Products', setSelectedCategory: (c: Category | 'All Products') => void }) => {
   const categories = ['All Products', 'Lip Gloss', 'Lip Liners', 'Lip Masks', 'Face Masks', 'Lip Scrubs', 'Accessories'];
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'All Products'>('All Products');
   const [sortOption, setSortOption] = useState<string>('featured');
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
@@ -1194,6 +1209,7 @@ const App = () => {
   const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState(''); // Global search term
   const [currency, setCurrency] = useState<Currency>('NGN'); // Global Currency State
+  const [selectedCategory, setSelectedCategory] = useState<Category | 'All Products'>('All Products');
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -1241,8 +1257,8 @@ const App = () => {
 
   const renderPage = () => {
     switch (activePage) {
-      case 'home': return <HomePage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} />;
-      case 'shop': return <ShopPage navigate={setActivePage} addToCart={addToCart} searchTerm={searchTerm} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} />;
+      case 'home': return <HomePage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} setCategory={setSelectedCategory} />;
+      case 'shop': return <ShopPage navigate={setActivePage} addToCart={addToCart} searchTerm={searchTerm} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />;
       case 'product': return <ProductPage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} />;
       case 'about': return <AboutPage />;
       case 'contact': return <ContactPage />;
@@ -1263,7 +1279,7 @@ const App = () => {
       case 'new-password': return <NewPasswordPage navigate={setActivePage} />;
       case 'profile': return user ? <ProfilePage user={user} logout={() => { setUser(null); setActivePage('home'); }} currency={currency} /> : <AuthPage setUser={setUser} navigate={setActivePage} />;
       
-      default: return <HomePage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} />;
+      default: return <HomePage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} setCategory={setSelectedCategory} />;
     }
   };
 
@@ -1273,7 +1289,7 @@ const App = () => {
       <main className="flex-grow flex flex-col">
         {renderPage()}
       </main>
-      <Footer navigate={setActivePage} />
+      <Footer navigate={setActivePage} setCategory={setSelectedCategory} />
     </div>
   );
 };
