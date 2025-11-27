@@ -2,11 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
-type Page = 'home' | 'shop' | 'product' | 'about' | 'contact' | 'testimonials' | 'cart' | 'checkout' | 'wishlist';
+type Page = 'home' | 'shop' | 'product' | 'about' | 'contact' | 'testimonials' | 'cart' | 'checkout' | 'wishlist' | 'shipping' | 'returns' | 'faq' | 'privacy' | 'terms' | 'journal' | 'auth' | 'profile';
+
+interface User {
+  name: string;
+  email: string;
+}
 
 // --- Shared Components ---
 
-const Header = ({ activePage, navigate, cartCount }: { activePage: Page, navigate: (p: Page) => void, cartCount: number }) => {
+const Header = ({ activePage, navigate, cartCount, user }: { activePage: Page, navigate: (p: Page) => void, cartCount: number, user: User | null }) => {
   const navLinkClass = (page: Page) => 
     `text-sm font-medium transition-colors cursor-pointer ${activePage === page ? 'text-primary font-bold' : 'text-text-light hover:text-primary'}`;
 
@@ -29,7 +34,7 @@ const Header = ({ activePage, navigate, cartCount }: { activePage: Page, navigat
         <nav className="hidden items-center gap-8 lg:flex">
           <a onClick={() => navigate('shop')} className={navLinkClass('shop')}>Shop</a>
           <a onClick={() => navigate('about')} className={navLinkClass('about')}>About Us</a>
-          <a onClick={() => navigate('testimonials')} className={navLinkClass('testimonials')}>Customer Testimonials</a>
+          <a onClick={() => navigate('journal')} className={navLinkClass('journal')}>Journal</a>
           <a onClick={() => navigate('contact')} className={navLinkClass('contact')}>Contact</a>
           <a onClick={() => navigate('wishlist')} className={navLinkClass('wishlist')}>Wishlist</a>
         </nav>
@@ -45,8 +50,11 @@ const Header = ({ activePage, navigate, cartCount }: { activePage: Page, navigat
             <button className="md:hidden flex h-10 w-10 items-center justify-center rounded-full hover:bg-subtle-light">
               <span className="material-symbols-outlined">search</span>
             </button>
-            <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-subtle-light" onClick={() => alert("Login feature coming soon!")}>
-              <span className="material-symbols-outlined">person</span>
+            <button 
+              className={`flex h-10 w-10 items-center justify-center rounded-full hover:bg-subtle-light ${user ? 'text-primary' : ''}`} 
+              onClick={() => user ? navigate('profile') : navigate('auth')}
+            >
+              <span className="material-symbols-outlined">{user ? 'account_circle' : 'person'}</span>
             </button>
             <button className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-subtle-light" onClick={() => navigate('cart')}>
               <span className="material-symbols-outlined">shopping_bag</span>
@@ -77,8 +85,8 @@ const Footer = ({ navigate }: { navigate: (p: Page) => void }) => (
           <h2 className="text-lg font-bold tracking-tight font-serif text-text-light">ZARA'S GLOSS</h2>
         </div>
         <div className="flex gap-6">
-           <a className="hover:text-primary cursor-pointer"><i className="material-symbols-outlined">public</i></a>
-           <a className="hover:text-primary cursor-pointer"><i className="material-symbols-outlined">share</i></a>
+           <a className="hover:text-primary cursor-pointer text-text-light"><i className="material-symbols-outlined">public</i></a>
+           <a className="hover:text-primary cursor-pointer text-text-light"><i className="material-symbols-outlined">share</i></a>
         </div>
       </div>
 
@@ -93,19 +101,20 @@ const Footer = ({ navigate }: { navigate: (p: Page) => void }) => (
         <div className="flex flex-col gap-4">
           <h3 className="text-sm font-bold uppercase tracking-wider text-text-light">Support</h3>
           <a onClick={() => navigate('contact')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Contact Us</a>
-          <a className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Shipping</a>
-          <a className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Returns</a>
-          <a className="text-sm text-text-muted-light hover:text-primary cursor-pointer">FAQ</a>
+          <a onClick={() => navigate('shipping')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Shipping</a>
+          <a onClick={() => navigate('returns')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Returns</a>
+          <a onClick={() => navigate('faq')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">FAQ</a>
         </div>
         <div className="flex flex-col gap-4">
           <h3 className="text-sm font-bold uppercase tracking-wider text-text-light">Legal</h3>
-          <a className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Privacy Policy</a>
-          <a className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Terms of Service</a>
+          <a onClick={() => navigate('privacy')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Privacy Policy</a>
+          <a onClick={() => navigate('terms')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Terms of Service</a>
         </div>
         <div className="flex flex-col gap-4">
           <h3 className="text-sm font-bold uppercase tracking-wider text-text-light">About</h3>
           <a onClick={() => navigate('about')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Our Story</a>
-          <a className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Journal</a>
+          <a onClick={() => navigate('journal')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Journal</a>
+          <a onClick={() => navigate('testimonials')} className="text-sm text-text-muted-light hover:text-primary cursor-pointer">Testimonials</a>
         </div>
       </div>
       <div className="mt-12 border-t border-black/10 pt-8 text-center text-sm text-text-muted-light">
@@ -558,11 +567,242 @@ const WishlistPage = () => (
   </div>
 );
 
+// --- New Pages ---
+
+const ShippingPage = () => (
+  <div className="w-full max-w-3xl mx-auto px-4 py-12">
+    <h1 className="text-3xl font-bold text-text-light mb-6">Shipping Policy</h1>
+    <div className="space-y-6 text-text-muted-light">
+      <p>
+        We are committed to delivering your order accurately, in good condition, and always on time. 
+        Please note our shipping policies below:
+      </p>
+      <h2 className="text-xl font-bold text-text-light">Processing Time</h2>
+      <p>Orders are processed within 1-2 business days. Orders placed on weekends or holidays will be processed the next business day.</p>
+      <h2 className="text-xl font-bold text-text-light">Shipping Rates</h2>
+      <p>Standard shipping is free for orders over $50. For orders under $50, a flat rate of $5.99 applies.</p>
+      <h2 className="text-xl font-bold text-text-light">International Shipping</h2>
+      <p>We currently ship to select international countries. International shipping rates vary by location and are calculated at checkout.</p>
+    </div>
+  </div>
+);
+
+const ReturnsPage = () => (
+  <div className="w-full max-w-3xl mx-auto px-4 py-12">
+    <h1 className="text-3xl font-bold text-text-light mb-6">Returns & Exchanges</h1>
+    <div className="space-y-6 text-text-muted-light">
+      <p>
+        We want you to love your purchase. If you are not completely satisfied, we are here to help.
+      </p>
+      <h2 className="text-xl font-bold text-text-light">30-Day Return Policy</h2>
+      <p>You have 30 days from the date of delivery to return your item. Items must be unused and in the same condition that you received them.</p>
+      <h2 className="text-xl font-bold text-text-light">How to Return</h2>
+      <p>To initiate a return, please contact our support team at support@zarasgloss.com with your order number and reason for return.</p>
+      <h2 className="text-xl font-bold text-text-light">Refunds</h2>
+      <p>Once we receive your item, we will inspect it and notify you on the status of your refund. If approved, a credit will automatically be applied to your original method of payment.</p>
+    </div>
+  </div>
+);
+
+const FAQPage = () => (
+  <div className="w-full max-w-3xl mx-auto px-4 py-12">
+    <h1 className="text-3xl font-bold text-text-light mb-8">Frequently Asked Questions</h1>
+    <div className="space-y-6">
+      {[
+        { q: "Are your products cruelty-free?", a: "Yes, absolutely! We are proud to be 100% cruelty-free and vegan." },
+        { q: "How can I track my order?", a: "Once your order ships, you will receive an email with a tracking number to monitor your shipment." },
+        { q: "Do you offer samples?", a: "We occasionally include free samples with orders over $50. Check our promotions page for current offers." },
+        { q: "Can I change my order after placing it?", a: "We process orders quickly, but if you contact us within 1 hour of placing your order, we will do our best to accommodate changes." }
+      ].map((faq, i) => (
+        <div key={i} className="bg-white p-6 rounded-xl border border-subtle-light">
+          <h3 className="text-lg font-bold text-text-light mb-2">{faq.q}</h3>
+          <p className="text-text-muted-light">{faq.a}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const PrivacyPolicyPage = () => (
+  <div className="w-full max-w-3xl mx-auto px-4 py-12">
+    <h1 className="text-3xl font-bold text-text-light mb-6">Privacy Policy</h1>
+    <div className="space-y-4 text-text-muted-light text-sm">
+      <p>Last updated: January 1, 2024</p>
+      <p>At ZARA'S GLOSS, we value your privacy. This Privacy Policy explains how we collect, use, and disclose your personal information.</p>
+      <h3 className="text-lg font-bold text-text-light mt-4">Information We Collect</h3>
+      <p>We collect information you provide directly to us, such as when you create an account, make a purchase, or sign up for our newsletter.</p>
+      <h3 className="text-lg font-bold text-text-light mt-4">How We Use Information</h3>
+      <p>We use your information to provide, maintain, and improve our services, process transactions, and communicate with you.</p>
+      <h3 className="text-lg font-bold text-text-light mt-4">Data Security</h3>
+      <p>We implement reasonable security measures to protect your personal information.</p>
+    </div>
+  </div>
+);
+
+const TermsOfServicePage = () => (
+  <div className="w-full max-w-3xl mx-auto px-4 py-12">
+    <h1 className="text-3xl font-bold text-text-light mb-6">Terms of Service</h1>
+    <div className="space-y-4 text-text-muted-light text-sm">
+      <p>Welcome to ZARA'S GLOSS. By accessing or using our website, you agree to be bound by these Terms of Service.</p>
+      <h3 className="text-lg font-bold text-text-light mt-4">Use of Service</h3>
+      <p>You agree to use our service only for lawful purposes and in accordance with these Terms.</p>
+      <h3 className="text-lg font-bold text-text-light mt-4">Intellectual Property</h3>
+      <p>The content on this website, including text, graphics, and logos, is the property of ZARA'S GLOSS and is protected by copyright laws.</p>
+      <h3 className="text-lg font-bold text-text-light mt-4">Limitation of Liability</h3>
+      <p>ZARA'S GLOSS shall not be liable for any indirect, incidental, or consequential damages arising from your use of our service.</p>
+    </div>
+  </div>
+);
+
+const JournalPage = () => (
+  <div className="w-full max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+    <h1 className="text-4xl font-black font-serif text-center mb-4">The Beauty Journal</h1>
+    <p className="text-center text-text-muted-light mb-12 max-w-2xl mx-auto">Tips, trends, and tales from the world of ZARA'S GLOSS.</p>
+    
+    <div className="grid md:grid-cols-3 gap-8">
+      {[
+        { title: "5 Tips for the Perfect Glass Skin", date: "Jan 12, 2024", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDxGXX2YIAA8KTRxkETei1MgTB1T9AQT6MEwFp-3QgudMkkG5W57L_p0cycKjCTu-jz-r2wxV1IxpDQFdOfTTn5kdPNC7M21vsAHQs1pzOB0T96UD209w6uv8gKXHybdVHLCjMpHoMef2USQTimRbrlkE_2uU2Cu8xXIVhP2pBJ9M5uIPM4KjZkypqC1qlMOuyeQ2O-zvIHrCOQHLniwn-CvNxNlhkfSzKcDtQXubkHTuLTKVOwV2-FaOV-TidJ5eMRqXM4dWwES-s" },
+        { title: "Why Clean Beauty Matters", date: "Jan 05, 2024", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAJwr63qbRaf306IRwe23935CrM9qneaEQkLJOUbBg4hXTBG4EEUvttJIHXaOkhD9_UxZO8ujuoP2p-PzC5tFBCj5crlBnYajlVJ4ng5JhF8qhNsiss81Um52qD2_q4ZVOxaSGdqHEk5X128Uur9G3Cw2mcdYA4w0oZI1LMQqvK-BwBHdGm_IFWmuDcfe0Xvsq7RvxaI9q00sYDcj12TkdQgx17m-iKeDkE1QvuGikQUbYXrdvPcWBZ_XLJvJnnjTq5OeTonhKk8mY" },
+        { title: "Meet the Founder: Zara's Vision", date: "Dec 28, 2023", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBrsBDMR8rFG9hyvXvK6HkW5Ze72N-wo-3LkIjKMrI7bAP5mDRoWEwGitivCQpgMvgA_9UdWS3ysuWReVaZL-12Ygk5Tcdk4a9HmwExRooePhJH5YNtYd3w1noSf6Mdy2MN6SZlBTj6tZxAq5gKnDS84y0OQ87jQIG8194Os_yN68Jy0GRHWP2y7j0srHF9tqxayi6HAJf4KvBaijhffmXZ2tSPIThDBCh5e9DJV7QFCcmJh84NMU9tD5x3I2gE7Aczn5ah_Jf5Lp8" }
+      ].map((article, i) => (
+        <div key={i} className="group cursor-pointer">
+          <div className="aspect-video rounded-xl bg-cover bg-center mb-4" style={{ backgroundImage: `url(${article.img})` }}></div>
+          <p className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">Beauty</p>
+          <h3 className="text-xl font-bold text-text-light mb-2 group-hover:text-primary transition-colors">{article.title}</h3>
+          <p className="text-sm text-text-muted-light">{article.date}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const AuthPage = ({ setUser, navigate }: { setUser: (u: User) => void, navigate: (p: Page) => void }) => {
+  const [isLogin, setIsLogin] = useState(true);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Mock login
+    setUser({ name: 'Jane Doe', email: 'jane@example.com' });
+    navigate('profile');
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-12">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-subtle-light">
+        <h1 className="text-3xl font-bold text-center mb-8">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
+        
+        <div className="flex mb-8 border-b border-subtle-light">
+          <button 
+            className={`flex-1 pb-3 font-medium ${isLogin ? 'text-primary border-b-2 border-primary' : 'text-text-muted-light'}`}
+            onClick={() => setIsLogin(true)}
+          >
+            Sign In
+          </button>
+          <button 
+            className={`flex-1 pb-3 font-medium ${!isLogin ? 'text-primary border-b-2 border-primary' : 'text-text-muted-light'}`}
+            onClick={() => setIsLogin(false)}
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          {!isLogin && (
+            <div>
+              <label className="block text-sm font-medium text-text-light mb-1">Full Name</label>
+              <input type="text" required className="w-full h-12 rounded-lg border-border-color focus:ring-primary focus:border-primary px-4" />
+            </div>
+          )}
+          <div>
+            <label className="block text-sm font-medium text-text-light mb-1">Email Address</label>
+            <input type="email" required className="w-full h-12 rounded-lg border-border-color focus:ring-primary focus:border-primary px-4" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-light mb-1">Password</label>
+            <input type="password" required className="w-full h-12 rounded-lg border-border-color focus:ring-primary focus:border-primary px-4" />
+          </div>
+          
+          <button className="w-full h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors mt-4">
+            {isLogin ? 'Sign In' : 'Create Account'}
+          </button>
+        </form>
+        
+        {isLogin && (
+          <p className="text-center text-sm text-text-muted-light mt-4 cursor-pointer hover:text-primary">Forgot Password?</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
+  <div className="w-full max-w-5xl mx-auto px-4 py-12">
+    <div className="flex flex-col md:flex-row gap-8">
+      <div className="w-full md:w-1/3">
+        <div className="bg-white p-6 rounded-xl border border-subtle-light text-center">
+          <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-4">
+            <span className="material-symbols-outlined text-4xl">person</span>
+          </div>
+          <h2 className="text-xl font-bold text-text-light">{user.name}</h2>
+          <p className="text-text-muted-light text-sm mb-6">{user.email}</p>
+          <button onClick={logout} className="w-full h-10 border border-border-color rounded-lg text-sm font-medium hover:bg-subtle-light transition-colors">
+            Log Out
+          </button>
+        </div>
+      </div>
+      
+      <div className="w-full md:w-2/3 space-y-8">
+        <div>
+          <h3 className="text-xl font-bold mb-4">Recent Orders</h3>
+          <div className="bg-white rounded-xl border border-subtle-light overflow-hidden">
+            {[
+              { id: "#10234", date: "Oct 12, 2023", total: "$73.00", status: "Delivered" },
+              { id: "#10201", date: "Sep 05, 2023", total: "$45.00", status: "Delivered" }
+            ].map((order, i) => (
+              <div key={i} className="flex justify-between items-center p-6 border-b border-subtle-light last:border-0">
+                <div>
+                  <p className="font-bold text-text-light">{order.id}</p>
+                  <p className="text-sm text-text-muted-light">{order.date}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium text-text-light">{order.total}</p>
+                  <p className="text-sm text-green-600 font-medium">{order.status}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-xl font-bold mb-4">Account Details</h3>
+          <div className="bg-white p-6 rounded-xl border border-subtle-light">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase text-text-muted-light mb-1">Name</label>
+                <p className="text-text-light font-medium">{user.name}</p>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase text-text-muted-light mb-1">Email</label>
+                <p className="text-text-light font-medium">{user.email}</p>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase text-text-muted-light mb-1">Location</label>
+                <p className="text-text-light font-medium">New York, USA</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 // --- Main App ---
 
 const App = () => {
   const [activePage, setActivePage] = useState<Page>('home');
   const [cartCount, setCartCount] = useState(2);
+  const [user, setUser] = useState<User | null>(null);
 
   // Scroll to top on page change
   useEffect(() => {
@@ -580,13 +820,24 @@ const App = () => {
       case 'cart': return <CartPage navigate={setActivePage} />;
       case 'checkout': return <CheckoutPage />;
       case 'wishlist': return <WishlistPage />;
+      
+      // New Pages
+      case 'shipping': return <ShippingPage />;
+      case 'returns': return <ReturnsPage />;
+      case 'faq': return <FAQPage />;
+      case 'privacy': return <PrivacyPolicyPage />;
+      case 'terms': return <TermsOfServicePage />;
+      case 'journal': return <JournalPage />;
+      case 'auth': return <AuthPage setUser={setUser} navigate={setActivePage} />;
+      case 'profile': return user ? <ProfilePage user={user} logout={() => { setUser(null); setActivePage('home'); }} /> : <AuthPage setUser={setUser} navigate={setActivePage} />;
+      
       default: return <HomePage navigate={setActivePage} />;
     }
   };
 
   return (
     <div className="flex min-h-screen flex-col font-display text-text-light bg-background-light">
-      <Header activePage={activePage} navigate={setActivePage} cartCount={cartCount} />
+      <Header activePage={activePage} navigate={setActivePage} cartCount={cartCount} user={user} />
       <main className="flex-grow flex flex-col">
         {renderPage()}
       </main>
