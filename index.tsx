@@ -1,47 +1,73 @@
-
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
 type Page = 'home' | 'shop' | 'product' | 'about' | 'contact' | 'testimonials' | 'cart' | 'checkout' | 'wishlist' | 'shipping' | 'returns' | 'faq' | 'privacy' | 'terms' | 'journal' | 'auth' | 'forgot-password' | 'new-password' | 'profile';
+type Currency = 'NGN' | 'USD';
 
 interface User {
   name: string;
   email: string;
 }
 
+type Category = 'Lip Gloss' | 'Lip Liners' | 'Lip Masks' | 'Face Masks' | 'Lip Scrubs' | 'Accessories';
+
 interface Product {
   id: string;
   name: string;
   sub: string;
-  price: number;
+  price: number; // Base price in NGN
   img: string;
+  category: Category;
+  description?: string;
 }
 
 interface CartItem extends Product {
   quantity: number;
 }
 
+interface Review {
+  id: number;
+  name: string;
+  rating: number;
+  text: string;
+  date: string;
+}
+
 // --- Mock Data ---
 const PRODUCTS: Product[] = [
-  { id: '1', name: "Luxe Lip Oil", sub: "Crystal Clear", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDKj21ZbHEbXYRtj7j6uGi5ly-LNfWv14P0T_rBJ7aB-oqSmMH9LQnMUKKnocX1OSNcogTjVYb5Y5zBteVhphmi3GKAuxsMn4Xlg6nhOu6wlJ_u2AYY3puxrP2Z_VjYn1Oks_N7bnV9pR1mqlgnBQCv82tdCkiph4nbL6Jp8JHfptGdMInBOG2N8ue80Bo0zy-VN328MutjoPoOB-rlPgezsKv3j6kTQYKh6Zk8eFoMI8WnYgdJZXrJ7WkCUVDUiD_Go3REg__VzeQ" },
-  { id: '2', name: "Radiant Serum", sub: "Hydrating Elixir", price: 45000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuACYOX2EDB6sFMQZ7gVxQwv7MAQiTBgPoJL2cFNTPYPvDS5pGCqmkPIwRiDYPjagdYqdvlF9REXZOXlhD37uIpa7IyMo9gpO9Th4BZYQBLknkSjfODHpW6F9P9cy78lBr-sngMKCAKvXRZW-YK0Loe0E84Sy0FoA2xSJgU9sQZF5Ur69zxpadxW69DnEWhPMroUOwvyOaHtxLuFt37iEvZnmCF0p9Ra-bvIHvpKo7DDwToSkNRJyClJR1hxwVWJD02mhaN_Oluur1Q" },
-  { id: '3', name: "Glow Foundation", sub: "Shade 2N", price: 52000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDcykf455oiIm92LkgTJDw4C4PU15P0FKToSg6w71z13rUBqu_pXYbAAR11RqEXkHMSkHel4EHxpFxsT-cPSAlkb9henIyY2GeSdF9yiZ30myYNbSPQbz34mrlUm81SWjdL-7L1hYHWR268CrXMAuKzVYWS5EV8vuyleRti9S8o4R1MnDZ-NAlQnIInGe4eIkfRlCrjbbjso9cqwdGZpk5vHxSkqv1ie3cOeLFHawImWrRAhEsko6OH3QfhemNcE0BTCcZgOq-jLmY" },
-  { id: '4', name: "Velvet Matte Lipstick", sub: "Rose Petal", price: 34000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAR4v4uEHHtakPxFT5H_tei_p7400lDW7vdCYZGSpB6aGMPx569l--qVDlMkSzRZjyJv22tYALeeVTMwJhnT3RvJJuU_z2jEnD_Y2PxZhMvSApf6swCBRyC2jgkGqRTAIX4Zk5mm_U2cAp6iJ6HfDIKxf7sOKoNQqW7MeIm4Lwlz153s6I8KVlDLXqwjwyzm_6eS_i311EXkeAwI2MRQL4Wh1f5Lm1lHIljPBm3Tlh1q0qwCvT1GNFL9niwktgqN9khwz8AL5J63mg" },
-  { id: '5', name: "Crystal Clear Gloss", sub: "High Shine", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6B2ky3Wv5aQQNEp03ILaWXLGRMZffXd4p8hk5nhpUSJQ56AdjasSwM5HnPgSV3C8DU-vJSa46jkQHliHXoiUZrQDqfLLc6hjD8QxWQU10Zfz5JVz2Kb4fcNwryvMdJhR_tcYRiUV0og5D6-PLkkae3KmBEkC9tsXXOLzSv8jM9eGGQZwFwbGDOLQt16VRjR3XA_a_8uWhYad_EQMunPdeiETqwLWVjEnrXL0MKzLJEN127rt0ZMDN3_GcWApKHpYRho24q9YOnE8" },
-  { id: '6', name: "Rose Petal Lip Liner", sub: "Precision Define", price: 22000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCNuNqHpDTC6N3IPpFFBBL0nOBt_OO6IWHt74ygkxqvAdR664On-900ApFUhNCRtrdABUHZ65_BQIrfsahCk4DZvWPgRWMF3_DwjLsYxS0IZXw5NZ3iSMe3tL15OiOuRoOkhM8wgSlGwRNNkgbrxeOnWSxtxrXRomglAJk8HYyKBf48DNPKk1ahzcB4P0Q07c9Nd8PIEg4on3qtqr-DJAGvEHFIhz71DgegOzJ8lVfzcqzMv8cuh_VNdr92Tr_RG8AKpKCB1OViCVE" },
-  { id: '7', name: "Velvet Lip Mask", sub: "Overnight Repair", price: 35000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBGqJXww6B6Wq-XRY4-YMiwcdRZThZeLJ8S02PWZ81FOeiESkkdzsvhHBAag5XOkFkmNa8AQ-ypFrZOa_UZPVNbVC0V6cHD6a9FfW6kXGuBNifNEO6MVdu78VYjAQpMdy_N6qAppo_Peqe0zgV8-0_LNC-HznfLt7mFONy5RsjIj2nYYp-Y3t05f3z7dKOtV4fbF4KiOlPNFclc66gHp6ZTjrTKdPCThVJJTJDgY69O1KoXQAowh-datfXqpYji0NeVpHGZjQQ9UIg" },
-  { id: '8', name: "Glow Hydration Face Mask", sub: "Deep Moisture", price: 40000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAzLEAUcO2O9lgSNRfWuwn3iTrzc2AETR_u72m8reajnJHqOfb8jtqEXot_LI4onz5U7mYilkB1eAeGbvekCVMyvU6bwH2FWyFl0YBIOoR_8gWHTuhM1TQgeMU-C8ASAwZ8BBBrmXrMZHZdWAuuUq-5fF5cBEfGPF5f7YzpXzehVc3m5Yb9xP7-bK0M3AzHkvwgdNhgKKXiN5ob3lPmzRDUkIYiLDJSdthI8CMM8whSqIumr3mvYVHeIcK4V_QQSlVAqH8eFkTGYWQ" },
-  { id: '9', name: "Sugar Kiss Lip Scrub", sub: "Exfoliating", price: 18000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuByY4UWFbo67-ZYxSqQdVTFutE4gp1h1JPd3b5O1k71rdcJ_z95yQirgOvO-OYqwPq7aLqJ_GInwGgoSg8gWsLCCBHeqtWY3AQY-U1w1kV9QpBPq8-YlpO3VI5XaOxmaCV6w_bnYQJP6w3VQlIZMvdHp_wBJ_5ojvqHcaaJke-eU6Bn5XIJ68uBkDj04Zm54ocdj48VO4RGaICO4gA5pxRGd6A8SjZ_5kDlKmRf58cMBpQpoji6BgErQodzjbnEjH391PB0yf9UMG8" },
-  { id: '10', name: "Plush Beauty Headband", sub: "Soft Pink", price: 15000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAq1p7bQY7iihF753CHbcNtFf26vESdRcFICULbtYX_vRy3g5y9qnFZSy5fCvh3Z70PQth_kYlCQt3FwZYZOUZSs506GCmuhNwpggT_rOY4opRvs4-uCkTzvcKw_KPS1kJtok7vahwk0l9urW7QENVFr-OAddONPE4XAaHfsPclY7ZyTk6AjypxmKdKRm9uManlbEAq0kzVHkvQlcCx4F_-9vWFAfmEz6M2VCY26sDpGcFphgXVgGOjZXpIfgOxkCun2NO2U6LjD68" },
-  { id: '11', name: "Diamond Shine Gloss", sub: "Sparkle Finish", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDJxF7ArW7cz8BJkNhJpMf6Zhg48Gq23-oUMjn5YCMunP9UlBdLr_GIc5LuR3BSRuCl-mFjlgcV7zdY_ToOGlWi0TfSxXhMUQXlDhXwzXfI96h8RKDUrd_BdxCACb3h0Cho6vRdVt1GuRhd0McDFRrk8ynIY6Lse8D5uvMTZ1jlMz9ttpBcXHDmU1w8QtavojGnHH4z0KMG941Nkr1tcbmsTAGdaWWqNMeBVWGM1P6jrKWZUSRY3UthiMVsyJ7jks3tYMQvifHrz-I" },
-  { id: '12', name: "Nude Attitude Lip Liner", sub: "Natural Shade", price: 22000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMO72ZznnFJse2TrsAfr265Wedb_JovSJVE63eM46PfvB8isVpZF_gboS5T7Q2BDxiSXkz16DQuuoZQ_YCBsRAI_Exbt2NqXFqeXLhIaQ8t9RJrNGWxbZs5CXV_hKehEFIp5Vk0rALSDpTkfq5xdS1rZsIXLSZSMIFgJ1X8Wy58ZEjXW52uZt_J85JpiUihvw_LJ7bxde6ksCTkpgrosXHyB1iZOHiNw8oMLDv2eGABgsDN12DI7rjdKrZoMvg8SqPoPlUuEyTDk4" },
+  { id: '1', name: "Luxe Lip Oil", sub: "Crystal Clear", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDKj21ZbHEbXYRtj7j6uGi5ly-LNfWv14P0T_rBJ7aB-oqSmMH9LQnMUKKnocX1OSNcogTjVYb5Y5zBteVhphmi3GKAuxsMn4Xlg6nhOu6wlJ_u2AYY3puxrP2Z_VjYn1Oks_N7bnV9pR1mqlgnBQCv82tdCkiph4nbL6Jp8JHfptGdMInBOG2N8ue80Bo0zy-VN328MutjoPoOB-rlPgezsKv3j6kTQYKh6Zk8eFoMI8WnYgdJZXrJ7WkCUVDUiD_Go3REg__VzeQ", category: 'Lip Gloss', description: "A non-sticky, high-shine lip oil infused with nourishing ingredients for a glass-like finish." },
+  { id: '2', name: "Radiant Serum", sub: "Hydrating Elixir", price: 45000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuACYOX2EDB6sFMQZ7gVxQwv7MAQiTBgPoJL2cFNTPYPvDS5pGCqmkPIwRiDYPjagdYqdvlF9REXZOXlhD37uIpa7IyMo9gpO9Th4BZYQBLknkSjfODHpW6F9P9cy78lBr-sngMKCAKvXRZW-YK0Loe0E84Sy0FoA2xSJgU9sQZF5Ur69zxpadxW69DnEWhPMroUOwvyOaHtxLuFt37iEvZnmCF0p9Ra-bvIHvpKo7DDwToSkNRJyClJR1hxwVWJD02mhaN_Oluur1Q", category: 'Face Masks', description: "Deeply hydrating serum that revitalizes dull skin, leaving it glowing and refreshed." },
+  { id: '3', name: "Glow Foundation", sub: "Shade 2N", price: 52000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDcykf455oiIm92LkgTJDw4C4PU15P0FKToSg6w71z13rUBqu_pXYbAAR11RqEXkHMSkHel4EHxpFxsT-cPSAlkb9henIyY2GeSdF9yiZ30myYNbSPQbz34mrlUm81SWjdL-7L1hYHWR268CrXMAuKzVYWS5EV8vuyleRti9S8o4R1MnDZ-NAlQnIInGe4eIkfRlCrjbbjso9cqwdGZpk5vHxSkqv1ie3cOeLFHawImWrRAhEsko6OH3QfhemNcE0BTCcZgOq-jLmY", category: 'Face Masks', description: "Lightweight, buildable foundation that provides a natural, dewy finish for all-day wear." },
+  { id: '4', name: "Velvet Matte Lipstick", sub: "Rose Petal", price: 34000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAR4v4uEHHtakPxFT5H_tei_p7400lDW7vdCYZGSpB6aGMPx569l--qVDlMkSzRZjyJv22tYALeeVTMwJhnT3RvJJuU_z2jEnD_Y2PxZhMvSApf6swCBRyC2jgkGqRTAIX4Zk5mm_U2cAp6iJ6HfDIKxf7sOKoNQqW7MeIm4Lwlz153s6I8KVlDLXqwjwyzm_6eS_i311EXkeAwI2MRQL4Wh1f5Lm1lHIljPBm3Tlh1q0qwCvT1GNFL9niwktgqN9khwz8AL5J63mg", category: 'Lip Gloss', description: "Richly pigmented lipstick with a soft matte finish that doesn't dry out your lips." },
+  { id: '5', name: "Crystal Clear Gloss", sub: "High Shine", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6B2ky3Wv5aQQNEp03ILaWXLGRMZffXd4p8hk5nhpUSJQ56AdjasSwM5HnPgSV3C8DU-vJSa46jkQHliHXoiUZrQDqfLLc6hjD8QxWQU10Zfz5JVz2Kb4fcNwryvMdJhR_tcYRiUV0og5D6-PLkkae3KmBEkC9tsXXOLzSv8jM9eGGQZwFwbGDOLQt16VRjR3XA_a_8uWhYad_EQMunPdeiETqwLWVjEnrXL0MKzLJEN127rt0ZMDN3_GcWApKHpYRho24q9YOnE8", category: 'Lip Gloss', description: "The ultimate clear gloss for a mirror-like shine that can be worn alone or over lipstick." },
+  { id: '6', name: "Rose Petal Lip Liner", sub: "Precision Define", price: 22000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCNuNqHpDTC6N3IPpFFBBL0nOBt_OO6IWHt74ygkxqvAdR664On-900ApFUhNCRtrdABUHZ65_BQIrfsahCk4DZvWPgRWMF3_DwjLsYxS0IZXw5NZ3iSMe3tL15OiOuRoOkhM8wgSlGwRNNkgbrxeOnWSxtxrXRomglAJk8HYyKBf48DNPKk1ahzcB4P0Q07c9Nd8PIEg4on3qtqr-DJAGvEHFIhz71DgegOzJ8lVfzcqzMv8cuh_VNdr92Tr_RG8AKpKCB1OViCVE", category: 'Lip Liners', description: "Creamy, long-wearing lip liner to define and shape your lips with precision." },
+  { id: '7', name: "Velvet Lip Mask", sub: "Overnight Repair", price: 35000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBGqJXww6B6Wq-XRY4-YMiwcdRZThZeLJ8S02PWZ81FOeiESkkdzsvhHBAag5XOkFkmNa8AQ-ypFrZOa_UZPVNbVC0V6cHD6a9FfW6kXGuBNifNEO6MVdu78VYjAQpMdy_N6qAppo_Peqe0zgV8-0_LNC-HznfLt7mFONy5RsjIj2nYYp-Y3t05f3z7dKOtV4fbF4KiOlPNFclc66gHp6ZTjrTKdPCThVJJTJDgY69O1KoXQAowh-datfXqpYji0NeVpHGZjQQ9UIg", category: 'Lip Masks', description: "An intensive overnight mask that soothes and moisturizes lips while you sleep." },
+  { id: '8', name: "Glow Hydration Face Mask", sub: "Deep Moisture", price: 40000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAzLEAUcO2O9lgSNRfWuwn3iTrzc2AETR_u72m8reajnJHqOfb8jtqEXot_LI4onz5U7mYilkB1eAeGbvekCVMyvU6bwH2FWyFl0YBIOoR_8gWHTuhM1TQgeMU-C8ASAwZ8BBBrmXrMZHZdWAuuUq-5fF5cBEfGPF5f7YzpXzehVc3m5Yb9xP7-bK0M3AzHkvwgdNhgKKXiN5ob3lPmzRDUkIYiLDJSdthI8CMM8whSqIumr3mvYVHeIcK4V_QQSlVAqH8eFkTGYWQ", category: 'Face Masks', description: "A refreshing gel mask that instantly quenches dry skin and boosts radiance." },
+  { id: '9', name: "Sugar Kiss Lip Scrub", sub: "Exfoliating", price: 18000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuByY4UWFbo67-ZYxSqQdVTFutE4gp1h1JPd3b5O1k71rdcJ_z95yQirgOvO-OYqwPq7aLqJ_GInwGgoSg8gWsLCCBHeqtWY3AQY-U1w1kV9QpBPq8-YlpO3VI5XaOxmaCV6w_bnYQJP6w3VQlIZMvdHp_wBJ_5ojvqHcaaJke-eU6Bn5XIJ68uBkDj04Zm54ocdj48VO4RGaICO4gA5pxRGd6A8SjZ_5kDlKmRf58cMBpQpoji6BgErQodzjbnEjH391PB0yf9UMG8", category: 'Lip Scrubs', description: "Gentle sugar scrub that buffs away dead skin for soft, smooth, kissable lips." },
+  { id: '10', name: "Plush Beauty Headband", sub: "Soft Pink", price: 15000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAq1p7bQY7iihF753CHbcNtFf26vESdRcFICULbtYX_vRy3g5y9qnFZSy5fCvh3Z70PQth_kYlCQt3FwZYZOUZSs506GCmuhNwpggT_rOY4opRvs4-uCkTzvcKw_KPS1kJtok7vahwk0l9urW7QENVFr-OAddONPE4XAaHfsPclY7ZyTk6AjypxmKdKRm9uManlbEAq0kzVHkvQlcCx4F_-9vWFAfmEz6M2VCY26sDpGcFphgXVgGOjZXpIfgOxkCun2NO2U6LjD68", category: 'Accessories', description: "Keep hair away from your face during your skincare routine with this ultra-soft headband." },
+  { id: '11', name: "Diamond Shine Gloss", sub: "Sparkle Finish", price: 28000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDJxF7ArW7cz8BJkNhJpMf6Zhg48Gq23-oUMjn5YCMunP9UlBdLr_GIc5LuR3BSRuCl-mFjlgcV7zdY_ToOGlWi0TfSxXhMUQXlDhXwzXfI96h8RKDUrd_BdxCACb3h0Cho6vRdVt1GuRhd0McDFRrk8ynIY6Lse8D5uvMTZ1jlMz9ttpBcXHDmU1w8QtavojGnHH4z0KMG941Nkr1tcbmsTAGdaWWqNMeBVWGM1P6jrKWZUSRY3UthiMVsyJ7jks3tYMQvifHrz-I", category: 'Lip Gloss', description: "A high-shine gloss infused with micro-shimmer for a dazzling, diamond-like finish." },
+  { id: '12', name: "Nude Attitude Lip Liner", sub: "Natural Shade", price: 22000, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMO72ZznnFJse2TrsAfr265Wedb_JovSJVE63eM46PfvB8isVpZF_gboS5T7Q2BDxiSXkz16DQuuoZQ_YCBsRAI_Exbt2NqXFqeXLhIaQ8t9RJrNGWxbZs5CXV_hKehEFIp5Vk0rALSDpTkfq5xdS1rZsIXLSZSMIFgJ1X8Wy58ZEjXW52uZt_J85JpiUihvw_LJ7bxde6ksCTkpgrosXHyB1iZOHiNw8oMLDv2eGABgsDN12DI7rjdKrZoMvg8SqPoPlUuEyTDk4", category: 'Lip Liners', description: "The perfect nude lip liner to contour and define your lips for a natural look." },
 ];
 
-const formatPrice = (price: number) => `₦${price.toLocaleString()}`;
+const MOCK_REVIEWS: Review[] = [
+  { id: 1, name: "Sarah J.", rating: 5, text: "Best gloss I've ever used. Not sticky at all!", date: "Oct 20, 2023" },
+  { id: 2, name: "Emily R.", rating: 5, text: "Love the shine and the smell is amazing.", date: "Oct 15, 2023" },
+  { id: 3, name: "Michael B.", rating: 4, text: "Great product, but the shipping took a bit longer than expected.", date: "Oct 10, 2023" }
+];
+
+// Helper function to format price based on currency
+const formatPrice = (price: number, currency: Currency) => {
+  if (currency === 'USD') {
+    // Approximate conversion rate: 1 USD = 1400 NGN (Simplified for demo)
+    const usdPrice = price / 1400;
+    return `$${usdPrice.toFixed(2)}`;
+  }
+  return `₦${price.toLocaleString()}`;
+};
 
 // --- Shared Components ---
 
-const Header = ({ activePage, navigate, cartCount, user }: { activePage: Page, navigate: (p: Page) => void, cartCount: number, user: User | null }) => {
+const Header = ({ activePage, navigate, cartCount, user, searchTerm, setSearchTerm, currency, setCurrency }: { activePage: Page, navigate: (p: Page) => void, cartCount: number, user: User | null, searchTerm: string, setSearchTerm: (t: string) => void, currency: Currency, setCurrency: (c: Currency) => void }) => {
   const navLinkClass = (page: Page) => 
     `text-sm font-medium transition-colors cursor-pointer ${activePage === page ? 'text-primary font-bold' : 'text-text-light hover:text-primary'}`;
 
@@ -70,14 +96,38 @@ const Header = ({ activePage, navigate, cartCount, user }: { activePage: Page, n
         </nav>
 
         <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
+          {/* Currency Switcher */}
+          <div className="hidden md:block">
+             <select 
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as Currency)}
+                className="bg-transparent border-none text-sm font-medium text-text-light focus:ring-0 cursor-pointer"
+             >
+               <option value="NGN">₦ NGN</option>
+               <option value="USD">$ USD</option>
+             </select>
+          </div>
+
           <div className="hidden max-w-xs flex-1 md:flex">
             <div className="relative w-full">
               <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted-light text-[20px]">search</span>
-              <input className="w-full h-10 pl-10 pr-4 rounded-full bg-subtle-light border-0 focus:ring-2 focus:ring-primary/50 text-sm placeholder:text-text-muted-light transition-all" placeholder="Search products..." type="text"/>
+              <input 
+                className="w-full h-10 pl-10 pr-4 rounded-full bg-subtle-light border-0 focus:ring-2 focus:ring-primary/50 text-sm placeholder:text-text-muted-light transition-all" 
+                placeholder="Search products..." 
+                type="text"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  if (activePage !== 'shop') navigate('shop');
+                }}
+              />
             </div>
           </div>
           <div className="flex gap-2">
-            <button className="md:hidden flex h-10 w-10 items-center justify-center rounded-full hover:bg-subtle-light">
+            <button 
+              className="md:hidden flex h-10 w-10 items-center justify-center rounded-full hover:bg-subtle-light"
+              onClick={() => navigate('shop')} 
+            >
               <span className="material-symbols-outlined">search</span>
             </button>
             <button 
@@ -154,115 +204,245 @@ const Footer = ({ navigate }: { navigate: (p: Page) => void }) => (
   </footer>
 );
 
-// --- Pages ---
+// --- Quick View Modal ---
 
-const HomePage = ({ navigate, addToCart }: { navigate: (p: Page) => void, addToCart: (p: Product) => void }) => (
-  <div className="flex flex-col w-full">
-    <section className="w-full px-4 py-12 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 rounded-3xl bg-cover bg-center bg-no-repeat p-8 text-center shadow-sm overflow-hidden relative" 
-           style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuC8T6fJD1l0k-AQDGzS3SHebplRLvYBC5Rk4ZpjjEe1YZQ33u8l13BNQqJ7zRYIG0h8jhIgGTKP6CZAk7QeJPeiLrvBcqPT6_EvtDQPNTxpGW3dWaq-Hnd66S-iGSW1UmvlzLb6KbI7PzmlzpSuGj0WcjgfemE8SL_OlR0ZvqJ9hhSF2tGDA9ZBW3pNTXfRdaBjW2CuPKv01Sx0RD314uJ1QHBh9m-qZFsANLM-23Ocq_0OHOujWOqoT6CqX0JCW_d94ONawawjTtQ")' }}>
-        <div className="flex flex-col gap-4 z-10">
-          <h1 className="font-serif text-5xl font-bold text-white md:text-7xl drop-shadow-lg">Gloss Up. Glow Up.</h1>
-          <h2 className="max-w-xl mx-auto text-lg font-medium text-white/90 md:text-xl">Unveil your radiance with our exclusive collection of luxury beauty essentials. Beauty made just for you.</h2>
-        </div>
-        <button onClick={() => navigate('shop')} className="z-10 flex h-12 items-center justify-center rounded-full bg-primary px-8 text-base font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-primary/90">
-          Shop Now
+const QuickViewModal = ({ product, isOpen, onClose, addToCart, toggleWishlist, isInWishlist, currency }: { product: Product | null, isOpen: boolean, onClose: () => void, addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean, currency: Currency }) => {
+  if (!isOpen || !product) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row" onClick={e => e.stopPropagation()}>
+        <button className="absolute top-4 right-4 p-2 rounded-full bg-black/10 hover:bg-black/20 z-10" onClick={onClose}>
+          <span className="material-symbols-outlined text-lg">close</span>
         </button>
-      </div>
-    </section>
-
-    <section className="w-full max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-      <h2 className="mb-10 text-center text-3xl font-bold tracking-tight text-text-light font-serif">Discover Our Best Sellers</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {PRODUCTS.slice(0, 4).map((item) => (
-          <div key={item.id} className="group flex flex-col gap-3 cursor-pointer" onClick={() => navigate('product')}>
-            <div className="w-full aspect-[3/4] bg-subtle-light rounded-xl overflow-hidden">
-              <div className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{ backgroundImage: `url(${item.img})` }}></div>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-text-light">{item.name}</p>
-              <p className="text-sm text-text-muted-light">{item.sub}</p>
-              <p className="mt-1 font-medium text-text-light">{formatPrice(item.price)}</p>
-            </div>
+        <div className="w-full md:w-1/2 h-64 md:h-auto bg-cover bg-center" style={{ backgroundImage: `url(${product.img})` }}></div>
+        <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
+          <h2 className="text-2xl font-serif font-bold text-text-light mb-2">{product.name}</h2>
+          <p className="text-text-muted-light text-sm mb-4">{product.sub}</p>
+          <p className="text-xl font-bold text-primary mb-4">{formatPrice(product.price, currency)}</p>
+          <p className="text-text-light/80 text-sm mb-6 line-clamp-3">{product.description || "A luxurious beauty essential for your daily routine."}</p>
+          
+          <div className="flex gap-4">
             <button 
-              onClick={(e) => { e.stopPropagation(); addToCart(item); }}
-              className="mt-2 w-full h-10 rounded-lg bg-primary text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-all"
+              onClick={() => { addToCart(product); onClose(); }}
+              className="flex-1 h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors"
             >
               Add to Cart
             </button>
+            <button 
+              onClick={() => toggleWishlist(product)}
+              className={`h-12 w-12 flex items-center justify-center border border-border-color rounded-lg hover:bg-subtle-light transition-colors ${isInWishlist(product.id) ? 'text-primary' : 'text-text-muted-light'}`}
+            >
+              <span className={`material-symbols-outlined ${isInWishlist(product.id) ? 'filled' : ''}`}>favorite</span>
+            </button>
           </div>
-        ))}
-      </div>
-    </section>
-
-    <section className="w-full bg-subtle-light py-20">
-      <div className="mx-auto max-w-4xl px-4 text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-text-light font-serif mb-4">Join the Gloss Club</h2>
-        <p className="text-lg text-text-muted-light mb-8">Sign up for exclusive offers, new product launches, and more.</p>
-        <div className="flex max-w-md mx-auto">
-          <input className="flex-1 h-14 rounded-l-full border-0 bg-white px-6 text-base focus:ring-2 focus:ring-primary" placeholder="Enter your email" type="email" />
-          <button className="h-14 px-8 rounded-r-full bg-primary text-white font-bold hover:bg-primary/90 transition-colors">
-            Subscribe
-          </button>
         </div>
-      </div>
-    </section>
-  </div>
-);
-
-const ShopPage = ({ navigate, addToCart }: { navigate: (p: Page) => void, addToCart: (p: Product) => void }) => {
-  const categories = ['All Products', 'Lip Gloss', 'Lip Liners', 'Lip Masks', 'Face Masks', 'Lip Scrubs', 'Accessories'];
-
-  return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-4xl font-black font-serif mb-8 text-text-light">The Collection</h1>
-      
-      <div className="flex gap-3 overflow-x-auto pb-4 mb-8 scrollbar-hide">
-        {categories.map((cat, i) => (
-          <button key={i} className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${i === 0 ? 'bg-primary text-white' : 'bg-primary/10 text-text-light hover:bg-primary/20'}`}>
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {PRODUCTS.map((item) => (
-          <div key={item.id} className="group flex flex-col gap-4" onClick={() => navigate('product')}>
-            <div className="relative w-full aspect-[3/4] bg-subtle-light rounded-xl overflow-hidden cursor-pointer">
-              <div className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{ backgroundImage: `url(${item.img})` }}></div>
-              <button className="absolute top-3 right-3 flex items-center justify-center w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm text-text-light opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-primary hover:text-white">
-                <span className="material-symbols-outlined text-lg">favorite</span>
-              </button>
-            </div>
-            <div className="text-center">
-              <h3 className="text-lg font-medium text-text-light cursor-pointer hover:text-primary">{item.name}</h3>
-              <p className="text-sm text-text-muted-light mt-1">{formatPrice(item.price)}</p>
-              <button 
-                onClick={(e) => { e.stopPropagation(); addToCart(item); }}
-                className="mt-3 w-full max-w-[160px] h-10 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 duration-300 mx-auto block"
-              >
-                Add to Cart
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex justify-center mt-12 gap-2">
-        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 hover:bg-primary/20 text-primary"><span className="material-symbols-outlined">chevron_left</span></button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white font-bold">1</button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10">2</button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10">3</button>
-        <span className="w-10 h-10 flex items-center justify-center">...</span>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 hover:bg-primary/20 text-primary"><span className="material-symbols-outlined">chevron_right</span></button>
       </div>
     </div>
   );
 };
 
-const ProductPage = ({ navigate, addToCart, toggleWishlist, isInWishlist }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean }) => {
+// --- Pages ---
+
+const HomePage = ({ navigate, addToCart, toggleWishlist, isInWishlist, currency }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean, currency: Currency }) => {
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+
+  return (
+    <div className="flex flex-col w-full">
+      <QuickViewModal 
+        product={quickViewProduct} 
+        isOpen={!!quickViewProduct} 
+        onClose={() => setQuickViewProduct(null)} 
+        addToCart={addToCart} 
+        toggleWishlist={toggleWishlist} 
+        isInWishlist={isInWishlist}
+        currency={currency}
+      />
+
+      <section className="w-full px-4 py-12 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 rounded-3xl bg-cover bg-center bg-no-repeat p-8 text-center shadow-sm overflow-hidden relative" 
+             style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuC8T6fJD1l0k-AQDGzS3SHebplRLvYBC5Rk4ZpjjEe1YZQ33u8l13BNQqJ7zRYIG0h8jhIgGTKP6CZAk7QeJPeiLrvBcqPT6_EvtDQPNTxpGW3dWaq-Hnd66S-iGSW1UmvlzLb6KbI7PzmlzpSuGj0WcjgfemE8SL_OlR0ZvqJ9hhSF2tGDA9ZBW3pNTXfRdaBjW2CuPKv01Sx0RD314uJ1QHBh9m-qZFsANLM-23Ocq_0OHOujWOqoT6CqX0JCW_d94ONawawjTtQ")' }}>
+          <div className="flex flex-col gap-4 z-10">
+            <h1 className="font-serif text-5xl font-bold text-white md:text-7xl drop-shadow-lg">Gloss Up. Glow Up.</h1>
+            <h2 className="max-w-xl mx-auto text-lg font-medium text-white/90 md:text-xl">Unveil your radiance with our exclusive collection of luxury beauty essentials. Beauty made just for you.</h2>
+          </div>
+          <button onClick={() => navigate('shop')} className="z-10 flex h-12 items-center justify-center rounded-full bg-primary px-8 text-base font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-primary/90">
+            Shop Now
+          </button>
+        </div>
+      </section>
+
+      <section className="w-full max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <h2 className="mb-10 text-center text-3xl font-bold tracking-tight text-text-light font-serif">Discover Our Best Sellers</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {PRODUCTS.slice(0, 4).map((item) => (
+            <div key={item.id} className="group flex flex-col gap-3 cursor-pointer relative" onClick={() => navigate('product')}>
+              <div className="w-full aspect-[3/4] bg-subtle-light rounded-xl overflow-hidden relative">
+                <div className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{ backgroundImage: `url(${item.img})` }}></div>
+                {/* Quick View Button Overlay */}
+                <button 
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 w-auto px-4 h-9 bg-white/90 backdrop-blur-sm text-text-light text-xs font-bold rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:text-white"
+                  onClick={(e) => { e.stopPropagation(); setQuickViewProduct(item); }}
+                >
+                  Quick View
+                </button>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-text-light">{item.name}</p>
+                <p className="text-sm text-text-muted-light">{item.sub}</p>
+                <p className="mt-1 font-medium text-text-light">{formatPrice(item.price, currency)}</p>
+              </div>
+              <button 
+                onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+                className="mt-2 w-full h-10 rounded-lg bg-primary text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0"
+              >
+                Add to Cart
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="w-full bg-subtle-light py-20">
+        <div className="mx-auto max-w-4xl px-4 text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-text-light font-serif mb-4">Join the Gloss Club</h2>
+          <p className="text-lg text-text-muted-light mb-8">Sign up for exclusive offers, new product launches, and more.</p>
+          <div className="flex max-w-md mx-auto">
+            <input className="flex-1 h-14 rounded-l-full border-0 bg-white px-6 text-base focus:ring-2 focus:ring-primary" placeholder="Enter your email" type="email" />
+            <button className="h-14 px-8 rounded-r-full bg-primary text-white font-bold hover:bg-primary/90 transition-colors">
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+const ShopPage = ({ navigate, addToCart, searchTerm, toggleWishlist, isInWishlist, currency }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, searchTerm: string, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean, currency: Currency }) => {
+  const categories = ['All Products', 'Lip Gloss', 'Lip Liners', 'Lip Masks', 'Face Masks', 'Lip Scrubs', 'Accessories'];
+  const [selectedCategory, setSelectedCategory] = useState<Category | 'All Products'>('All Products');
+  const [sortOption, setSortOption] = useState<string>('featured');
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+
+  // Filter by Category and Search Term
+  let filteredProducts = PRODUCTS.filter(p => {
+    const matchesCategory = selectedCategory === 'All Products' || p.category === selectedCategory;
+    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Sort Products
+  filteredProducts.sort((a, b) => {
+    if (sortOption === 'price-low-high') return a.price - b.price;
+    if (sortOption === 'price-high-low') return b.price - a.price;
+    if (sortOption === 'alphabetical') return a.name.localeCompare(b.name);
+    return 0; // Featured (default order)
+  });
+
+  return (
+    <div className="w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <QuickViewModal 
+        product={quickViewProduct} 
+        isOpen={!!quickViewProduct} 
+        onClose={() => setQuickViewProduct(null)} 
+        addToCart={addToCart} 
+        toggleWishlist={toggleWishlist} 
+        isInWishlist={isInWishlist}
+        currency={currency}
+      />
+
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <h1 className="text-4xl font-black font-serif text-text-light">The Collection</h1>
+        
+        {/* Sorting Dropdown */}
+        <div className="relative">
+          <select 
+            className="appearance-none bg-subtle-light border-0 rounded-lg py-2 pl-4 pr-10 text-sm font-medium text-text-light focus:ring-2 focus:ring-primary/50 cursor-pointer"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="featured">Featured</option>
+            <option value="price-low-high">Price: Low to High</option>
+            <option value="price-high-low">Price: High to Low</option>
+            <option value="alphabetical">Alphabetical Order</option>
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-text-muted-light">
+            <span className="material-symbols-outlined text-lg">expand_more</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex gap-3 overflow-x-auto pb-4 mb-8 scrollbar-hide">
+        {categories.map((cat, i) => (
+          <button 
+            key={i} 
+            onClick={() => setSelectedCategory(cat as Category | 'All Products')}
+            className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${selectedCategory === cat ? 'bg-primary text-white' : 'bg-primary/10 text-text-light hover:bg-primary/20'}`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {filteredProducts.length === 0 ? (
+        <div className="text-center py-20">
+          <p className="text-xl text-text-muted-light mb-6">No products found matching your criteria.</p>
+          <button onClick={() => setSelectedCategory('All Products')} className="text-primary hover:underline">Clear Filters</button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {filteredProducts.map((item) => (
+            <div key={item.id} className="group flex flex-col gap-4 relative" onClick={() => navigate('product')}>
+              <div className="relative w-full aspect-[3/4] bg-subtle-light rounded-xl overflow-hidden cursor-pointer">
+                <div className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{ backgroundImage: `url(${item.img})` }}></div>
+                
+                <button 
+                  className="absolute top-3 right-3 flex items-center justify-center w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm text-text-light opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-primary hover:text-white"
+                  onClick={(e) => { e.stopPropagation(); toggleWishlist(item); }}
+                >
+                  <span className={`material-symbols-outlined text-lg ${isInWishlist(item.id) ? 'filled text-primary' : ''}`}>favorite</span>
+                </button>
+
+                {/* Quick View Button Overlay */}
+                <button 
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 w-auto px-4 h-9 bg-white/90 backdrop-blur-sm text-text-light text-xs font-bold rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:text-white"
+                  onClick={(e) => { e.stopPropagation(); setQuickViewProduct(item); }}
+                >
+                  Quick View
+                </button>
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-medium text-text-light cursor-pointer hover:text-primary">{item.name}</h3>
+                <p className="text-sm text-text-muted-light mt-1">{formatPrice(item.price, currency)}</p>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+                  className="mt-3 w-full max-w-[160px] h-10 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 duration-300 mx-auto block"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ProductPage = ({ navigate, addToCart, toggleWishlist, isInWishlist, currency }: { navigate: (p: Page) => void, addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, isInWishlist: (id: string) => boolean, currency: Currency }) => {
   const [activeTab, setActiveTab] = useState<'description' | 'ingredients' | 'reviews'>('description');
+  const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
+  const [newReview, setNewReview] = useState({ name: '', rating: 5, text: '' });
   const product = PRODUCTS[0]; // Displaying the first product as example for Product Details page
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newReview.name && newReview.text) {
+      setReviews([...reviews, { ...newReview, id: Date.now(), date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }]);
+      setNewReview({ name: '', rating: 5, text: '' });
+    }
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
@@ -297,10 +477,10 @@ const ProductPage = ({ navigate, addToCart, toggleWishlist, isInWishlist }: { na
               {[1,2,3,4].map(i => <span key={i} className="material-symbols-outlined filled text-lg">star</span>)}
               <span className="material-symbols-outlined text-lg">star</span>
             </div>
-            <span className="text-sm text-text-muted-light">(121 reviews)</span>
+            <span className="text-sm text-text-muted-light">({reviews.length} reviews)</span>
           </div>
 
-          <p className="text-3xl font-bold text-text-light mb-8">{formatPrice(product.price)}</p>
+          <p className="text-3xl font-bold text-text-light mb-8">{formatPrice(product.price, currency)}</p>
 
           <div className="flex items-center gap-6 mb-8">
             <button onClick={() => addToCart(product)} className="flex-1 h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-md">
@@ -343,21 +523,46 @@ const ProductPage = ({ navigate, addToCart, toggleWishlist, isInWishlist }: { na
                 <p>Polybutene, Octyldodecanol, Bis-Diglyceryl Polyacyladipate-2, Tricaprylin, Cera Microcristallina (Microcrystalline Wax), Euphorbia Cerifera (Candelilla) Wax, Ricinus Communis (Castor) Seed Oil, Silica Dimethyl Silylate, Butyrospermum Parkii (Shea) Butter, VP/Eicosene Copolymer, VP/Hexadecene Copolymer, Octyldodecyl Stearoyl Stearate, Simmondsia Chinensis (Jojoba) Seed Oil, Tocopheryl Acetate.</p>
               )}
               {activeTab === 'reviews' && (
-                <div className="space-y-4">
-                  <div className="border-b border-subtle-light pb-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-text-light">Sarah J.</span>
-                      <div className="flex text-primary text-xs"><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span></div>
+                <div className="space-y-6">
+                  {/* Review Form */}
+                   <form onSubmit={handleReviewSubmit} className="bg-subtle-light p-4 rounded-lg mb-6">
+                    <h4 className="text-sm font-bold mb-3">Write a Review</h4>
+                    <input 
+                      type="text" 
+                      placeholder="Your Name" 
+                      className="w-full mb-2 p-2 rounded border border-border-color text-sm focus:ring-primary focus:border-primary"
+                      value={newReview.name}
+                      onChange={e => setNewReview({...newReview, name: e.target.value})}
+                      required
+                    />
+                    <textarea 
+                      placeholder="Your Review" 
+                      className="w-full mb-2 p-2 rounded border border-border-color text-sm focus:ring-primary focus:border-primary"
+                      rows={2}
+                      value={newReview.text}
+                      onChange={e => setNewReview({...newReview, text: e.target.value})}
+                      required
+                    ></textarea>
+                    <button type="submit" className="bg-primary text-white px-4 py-2 rounded text-xs font-bold hover:bg-primary/90">Submit Review</button>
+                  </form>
+
+                  {/* Review List */}
+                  {reviews.map((review) => (
+                     <div key={review.id} className="border-b border-subtle-light pb-4 last:border-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-text-light">{review.name}</span>
+                          <div className="flex text-primary text-xs">
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className={`material-symbols-outlined text-sm ${i < review.rating ? 'filled' : ''}`}>star</span>
+                            ))}
+                          </div>
+                        </div>
+                        <span className="text-xs text-text-muted-light">{review.date}</span>
+                      </div>
+                      <p className="text-sm">{review.text}</p>
                     </div>
-                    <p className="text-sm">Best gloss I've ever used. Not sticky at all!</p>
-                  </div>
-                  <div className="border-b border-subtle-light pb-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-text-light">Emily R.</span>
-                       <div className="flex text-primary text-xs"><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span><span className="material-symbols-outlined filled">star</span></div>
-                    </div>
-                    <p className="text-sm">Love the shine and the smell is amazing.</p>
-                  </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -429,7 +634,7 @@ const TestimonialsPage = () => (
   </div>
 );
 
-const CartPage = ({ navigate, cartItems, updateQuantity }: { navigate: (p: Page) => void, cartItems: CartItem[], updateQuantity: (id: string, delta: number) => void }) => {
+const CartPage = ({ navigate, cartItems, updateQuantity, currency }: { navigate: (p: Page) => void, cartItems: CartItem[], updateQuantity: (id: string, delta: number) => void, currency: Currency }) => {
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   return (
@@ -437,10 +642,14 @@ const CartPage = ({ navigate, cartItems, updateQuantity }: { navigate: (p: Page)
       <h1 className="text-4xl font-black text-text-light mb-10">Shopping Cart</h1>
       
       {cartItems.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-xl text-text-muted-light mb-6">Your cart is currently empty.</p>
-          <button onClick={() => navigate('shop')} className="h-12 px-8 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors">
-            Return to Shop
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="w-24 h-24 bg-subtle-light rounded-full flex items-center justify-center text-text-muted-light mb-6">
+             <span className="material-symbols-outlined text-4xl">shopping_bag</span>
+          </div>
+          <h2 className="text-2xl font-bold text-text-light mb-2">Your cart is feeling a little lonely!</h2>
+          <p className="text-lg text-text-muted-light mb-8 max-w-md">Let's fill it up with some goodies.</p>
+          <button onClick={() => navigate('shop')} className="h-14 px-10 bg-primary text-white font-bold text-lg rounded-full hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 duration-300">
+            Start Shopping
           </button>
         </div>
       ) : (
@@ -452,7 +661,7 @@ const CartPage = ({ navigate, cartItems, updateQuantity }: { navigate: (p: Page)
                 <div className="flex-1">
                   <h3 className="font-medium text-lg text-text-light">{item.name}</h3>
                   <p className="text-text-muted-light">{item.sub}</p>
-                  <p className="text-text-muted-light mt-1">{formatPrice(item.price)}</p>
+                  <p className="text-text-muted-light mt-1">{formatPrice(item.price, currency)}</p>
                 </div>
                 <div className="flex items-center border border-border-color rounded-lg h-10">
                   <button onClick={() => updateQuantity(item.id, -1)} className="px-3 text-text-muted-light hover:text-primary">-</button>
@@ -469,7 +678,7 @@ const CartPage = ({ navigate, cartItems, updateQuantity }: { navigate: (p: Page)
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-text-muted-light">
                   <span>Subtotal</span>
-                  <span className="text-text-light font-medium">{formatPrice(subtotal)}</span>
+                  <span className="text-text-light font-medium">{formatPrice(subtotal, currency)}</span>
                 </div>
                 <div className="flex justify-between text-text-muted-light">
                   <span>Shipping</span>
@@ -479,7 +688,7 @@ const CartPage = ({ navigate, cartItems, updateQuantity }: { navigate: (p: Page)
               <div className="border-t border-subtle-light pt-4 mb-8">
                 <div className="flex justify-between text-lg font-bold text-text-light">
                   <span>Total</span>
-                  <span>{formatPrice(subtotal)}</span>
+                  <span>{formatPrice(subtotal, currency)}</span>
                 </div>
               </div>
               <button onClick={() => navigate('checkout')} className="w-full h-12 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors">
@@ -607,7 +816,7 @@ const ContactPage = () => (
   </div>
 );
 
-const WishlistPage = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart }: { wishlistItems: Product[], addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, addAllToCart: (items: Product[]) => void }) => (
+const WishlistPage = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart, currency }: { wishlistItems: Product[], addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, addAllToCart: (items: Product[]) => void, currency: Currency }) => (
   <div className="w-full max-w-7xl mx-auto px-4 py-12">
     <h1 className="text-4xl font-black text-text-light mb-8">My Wishlist</h1>
     
@@ -630,7 +839,7 @@ const WishlistPage = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart }
               </div>
               <div className="text-center">
                 <p className="font-medium text-text-light">{item.name}</p>
-                <p className="text-sm text-text-light mt-1">{formatPrice(item.price)}</p>
+                <p className="text-sm text-text-light mt-1">{formatPrice(item.price, currency)}</p>
                 <button 
                   onClick={() => addToCart(item)}
                   className="mt-3 w-full h-10 bg-primary text-white font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors"
@@ -656,7 +865,7 @@ const WishlistPage = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart }
 
 // --- New Pages ---
 
-const ShippingPage = () => (
+const ShippingPage = ({ currency }: { currency: Currency }) => (
   <div className="w-full max-w-3xl mx-auto px-4 py-12">
     <h1 className="text-3xl font-bold text-text-light mb-6">Shipping Policy</h1>
     <div className="space-y-6 text-text-muted-light">
@@ -667,7 +876,7 @@ const ShippingPage = () => (
       <h2 className="text-xl font-bold text-text-light">Processing Time</h2>
       <p>Orders are processed within 1-2 business days. Orders placed on weekends or holidays will be processed the next business day.</p>
       <h2 className="text-xl font-bold text-text-light">Shipping Rates</h2>
-      <p>Standard shipping is free for orders over ₦50,000. For orders under ₦50,000, a flat rate of ₦5,000 applies.</p>
+      <p>Standard shipping is free for orders over {formatPrice(50000, currency)}. For orders under {formatPrice(50000, currency)}, a flat rate of {formatPrice(5000, currency)} applies.</p>
       <h2 className="text-xl font-bold text-text-light">International Shipping</h2>
       <p>We currently ship to select international countries. International shipping rates vary by location and are calculated at checkout.</p>
     </div>
@@ -691,14 +900,14 @@ const ReturnsPage = () => (
   </div>
 );
 
-const FAQPage = () => (
+const FAQPage = ({ currency }: { currency: Currency }) => (
   <div className="w-full max-w-3xl mx-auto px-4 py-12">
     <h1 className="text-3xl font-bold text-text-light mb-8">Frequently Asked Questions</h1>
     <div className="space-y-6">
       {[
         { q: "Are your products cruelty-free?", a: "Yes, absolutely! We are proud to be 100% cruelty-free and vegan." },
         { q: "How can I track my order?", a: "Once your order ships, you will receive an email with a tracking number to monitor your shipment." },
-        { q: "Do you offer samples?", a: "We occasionally include free samples with orders over ₦50,000. Check our promotions page for current offers." },
+        { q: `Do you offer samples?`, a: `We occasionally include free samples with orders over ${formatPrice(50000, currency)}. Check our promotions page for current offers.` },
         { q: "Can I change my order after placing it?", a: "We process orders quickly, but if you contact us within 1 hour of placing your order, we will do our best to accommodate changes." }
       ].map((faq, i) => (
         <div key={i} className="bg-white p-6 rounded-xl border border-subtle-light">
@@ -886,7 +1095,7 @@ const AuthPage = ({ setUser, navigate }: { setUser: (u: User) => void, navigate:
   );
 };
 
-const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
+const ProfilePage = ({ user, logout, currency }: { user: User, logout: () => void, currency: Currency }) => (
   <div className="w-full max-w-5xl mx-auto px-4 py-12">
     <h1 className="text-3xl font-bold text-text-light mb-8">My Account</h1>
     <div className="flex flex-col md:flex-row gap-8">
@@ -908,8 +1117,8 @@ const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
           <h3 className="text-xl font-bold mb-4 text-text-light">Recent Orders</h3>
           <div className="bg-white rounded-xl border border-subtle-light overflow-hidden">
             {[
-              { id: "#10234", date: "Oct 12, 2023", total: "₦73,000", status: "Delivered" },
-              { id: "#10201", date: "Sep 05, 2023", total: "₦45,000", status: "Delivered" }
+              { id: "#10234", date: "Oct 12, 2023", total: 73000, status: "Delivered" },
+              { id: "#10201", date: "Sep 05, 2023", total: 45000, status: "Delivered" }
             ].map((order, i) => (
               <div key={i} className="flex justify-between items-center p-6 border-b border-subtle-light last:border-0 hover:bg-fbf9fa transition-colors">
                 <div>
@@ -917,7 +1126,7 @@ const ProfilePage = ({ user, logout }: { user: User, logout: () => void }) => (
                   <p className="text-sm text-text-muted-light">{order.date}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-text-light">{order.total}</p>
+                  <p className="font-medium text-text-light">{formatPrice(order.total, currency)}</p>
                   <p className="text-sm text-green-600 font-medium">{order.status}</p>
                 </div>
               </div>
@@ -957,6 +1166,8 @@ const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = useState(''); // Global search term
+  const [currency, setCurrency] = useState<Currency>('NGN'); // Global Currency State
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -1004,35 +1215,35 @@ const App = () => {
 
   const renderPage = () => {
     switch (activePage) {
-      case 'home': return <HomePage navigate={setActivePage} addToCart={addToCart} />;
-      case 'shop': return <ShopPage navigate={setActivePage} addToCart={addToCart} />;
-      case 'product': return <ProductPage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />;
+      case 'home': return <HomePage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} />;
+      case 'shop': return <ShopPage navigate={setActivePage} addToCart={addToCart} searchTerm={searchTerm} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} />;
+      case 'product': return <ProductPage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} />;
       case 'about': return <AboutPage />;
       case 'contact': return <ContactPage />;
       case 'testimonials': return <TestimonialsPage />;
-      case 'cart': return <CartPage navigate={setActivePage} cartItems={cartItems} updateQuantity={updateCartQuantity} />;
+      case 'cart': return <CartPage navigate={setActivePage} cartItems={cartItems} updateQuantity={updateCartQuantity} currency={currency} />;
       case 'checkout': return <CheckoutPage />;
-      case 'wishlist': return <WishlistPage wishlistItems={wishlistItems} addToCart={addToCart} toggleWishlist={toggleWishlist} addAllToCart={addAllToCart} />;
+      case 'wishlist': return <WishlistPage wishlistItems={wishlistItems} addToCart={addToCart} toggleWishlist={toggleWishlist} addAllToCart={addAllToCart} currency={currency} />;
       
       // New Pages
-      case 'shipping': return <ShippingPage />;
+      case 'shipping': return <ShippingPage currency={currency} />;
       case 'returns': return <ReturnsPage />;
-      case 'faq': return <FAQPage />;
+      case 'faq': return <FAQPage currency={currency} />;
       case 'privacy': return <PrivacyPolicyPage />;
       case 'terms': return <TermsOfServicePage />;
       case 'journal': return <JournalPage />;
       case 'auth': return <AuthPage setUser={setUser} navigate={setActivePage} />;
       case 'forgot-password': return <ForgotPasswordPage navigate={setActivePage} />;
       case 'new-password': return <NewPasswordPage navigate={setActivePage} />;
-      case 'profile': return user ? <ProfilePage user={user} logout={() => { setUser(null); setActivePage('home'); }} /> : <AuthPage setUser={setUser} navigate={setActivePage} />;
+      case 'profile': return user ? <ProfilePage user={user} logout={() => { setUser(null); setActivePage('home'); }} currency={currency} /> : <AuthPage setUser={setUser} navigate={setActivePage} />;
       
-      default: return <HomePage navigate={setActivePage} addToCart={addToCart} />;
+      default: return <HomePage navigate={setActivePage} addToCart={addToCart} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} currency={currency} />;
     }
   };
 
   return (
     <div className="flex min-h-screen flex-col font-display text-text-light bg-background-light">
-      <Header activePage={activePage} navigate={setActivePage} cartCount={cartCount} user={user} />
+      <Header activePage={activePage} navigate={setActivePage} cartCount={cartCount} user={user} searchTerm={searchTerm} setSearchTerm={setSearchTerm} currency={currency} setCurrency={setCurrency} />
       <main className="flex-grow flex flex-col">
         {renderPage()}
       </main>
