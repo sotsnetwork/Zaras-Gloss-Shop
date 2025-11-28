@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -185,6 +184,22 @@ const Footer = ({ navigate, setCategory }: { navigate: (p: Page) => void, setCat
           </div>
           <h2 className="text-lg font-bold tracking-tight font-serif text-text-light">ZARA'S GLOSS</h2>
         </div>
+        
+        {/* Newsletter Signup Form */}
+        <div className="w-full md:w-auto max-w-md">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-text-light mb-3">Subscribe to our Newsletter</h3>
+          <div className="flex">
+            <input 
+              type="email" 
+              placeholder="Enter your email" 
+              className="flex-1 h-10 px-4 rounded-l-lg border border-border-color text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none bg-white"
+            />
+            <button className="h-10 px-6 bg-primary text-white text-sm font-bold rounded-r-lg hover:bg-primary/90 transition-colors">
+              Subscribe
+            </button>
+          </div>
+        </div>
+
         <div className="flex gap-6">
            <a className="hover:text-primary cursor-pointer text-text-light"><i className="material-symbols-outlined">public</i></a>
            <a className="hover:text-primary cursor-pointer text-text-light"><i className="material-symbols-outlined">share</i></a>
@@ -886,7 +901,7 @@ const ContactPage = () => (
   </div>
 );
 
-const WishlistPageRefactored = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart, currency, isInWishlist }: { wishlistItems: Product[], addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, addAllToCart: (items: Product[]) => void, currency: Currency, isInWishlist: (id: string) => boolean }) => {
+const WishlistPage = ({ wishlistItems, addToCart, toggleWishlist, addAllToCart, currency, isInWishlist }: { wishlistItems: Product[], addToCart: (p: Product) => void, toggleWishlist: (p: Product) => void, addAllToCart: (items: Product[]) => void, currency: Currency, isInWishlist: (id: string) => boolean }) => {
     const [wishlistSearchTerm, setWishlistSearchTerm] = useState('');
     const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
@@ -1078,7 +1093,9 @@ const JournalPage = () => (
           <p className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">Beauty</p>
           <h3 className="text-xl font-bold text-text-light mb-2 group-hover:text-primary transition-colors">{article.title}</h3>
           <p className="text-sm text-text-muted-light">{article.date}</p>
-          <SocialShareButtons />
+          <div onClick={(e) => e.stopPropagation()}>
+            <SocialShareButtons />
+          </div>
         </div>
       ))}
     </div>
@@ -1337,7 +1354,7 @@ const App = () => {
       case 'testimonials': return <TestimonialsPage />;
       case 'cart': return <CartPage navigate={setActivePage} cartItems={cartItems} updateQuantity={updateCartQuantity} currency={currency} />;
       case 'checkout': return <CheckoutPage />;
-      case 'wishlist': return <WishlistPageRefactored wishlistItems={wishlistItems} addToCart={addToCart} toggleWishlist={toggleWishlist} addAllToCart={addAllToCart} currency={currency} isInWishlist={isInWishlist} />;
+      case 'wishlist': return <WishlistPage wishlistItems={wishlistItems} addToCart={addToCart} toggleWishlist={toggleWishlist} addAllToCart={addAllToCart} currency={currency} isInWishlist={isInWishlist} />;
       
       // New Pages
       case 'shipping': return <ShippingPage currency={currency} />;
