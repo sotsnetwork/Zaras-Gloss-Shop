@@ -52,23 +52,37 @@
     .material-symbols-outlined.filled {
       font-variation-settings: 'FILL' 1;
     }
+    /* Hide icon text until the icon font has loaded (prevents names showing before glyphs) */
+    .material-symbols-outlined {
+      visibility: hidden;
+    }
+    html.icons-loaded .material-symbols-outlined {
+      visibility: visible;
+    }
     body {
       background-color: #fbf9fa;
       color: #191014;
     }
   </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/"
-  }
-}
-</script>
 </head>
 <body>
   <div id="root"></div>
+  <script>
+    (function() {
+      var done = false;
+      function showIcons() {
+        if (done) return;
+        done = true;
+        document.documentElement.classList.add('icons-loaded');
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(showIcons);
+        setTimeout(showIcons, 3000);
+      } else {
+        showIcons();
+      }
+    })();
+  </script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>
